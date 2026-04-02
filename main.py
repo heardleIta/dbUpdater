@@ -1,9 +1,10 @@
 
 import json
+import os
 import requests
 from ytmusicapi import YTMusic
 
-from dbUpdater.send import sender
+from send import sender
 
 # Client YouTube Music usato per tutte le chiamate all'API di YTMusic
 yt = YTMusic()
@@ -149,7 +150,7 @@ def writeJSON(obj, path):
 if __name__ == '__main__':
   # Carica gli artisti dal DB e unisce quelli nuovi definiti localmente in newArtists.json
   allArtists = getAllArtists()
-  newArtists = json.load(open("newArtists.json", "r", encoding="utf-8"))
+  newArtists = json.load(open(os.path.join(os.path.dirname(__file__), "newArtists.json"), "r", encoding="utf-8"))
   newArtistIds = {a['youtubeArtistId'] for a in newArtists}
   allArtists = newArtists + allArtists
 
