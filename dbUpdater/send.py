@@ -61,7 +61,7 @@ def sender():
         log.warning("Cartella ArtistiRevisionati non trovata, nessun file da inviare.")
         return
 
-    artistList = os.listdir(ARTISTI_REVISIONATI)
+    artistList = [f for f in os.listdir(ARTISTI_REVISIONATI) if f.endswith(".json")]
     if not artistList:
         log.info("Nessun artista da inviare.")
         return

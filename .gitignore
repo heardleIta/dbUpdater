@@ -1,0 +1,14 @@
+# Dipendenze Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Dati generati a runtime — le cartelle sono tracciate via .gitkeep,
+# i JSON vengono ignorati perché contengono dati potenzialmente grandi
+ArtistiRevisionati/*.json
+ArtistiSongSent/*.json
+
+# Cartella legacy (minuscola) — non usata dal codice
+artistiRevisionati/

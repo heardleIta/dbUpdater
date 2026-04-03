@@ -1,0 +1,6 @@
+services:
+  dbupdater:
+    build: .
+    volumes:
+      - ./ArtistiRevisionati:/app/ArtistiRevisionati
+      - ./ArtistiSongSent:/app/ArtistiSongSent

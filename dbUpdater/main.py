@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import re
 
 import requests
 from ytmusicapi import YTMusic
@@ -33,11 +34,12 @@ def getAllArtists():
 def getAllAlbumOfArtistInDB(artistId):
     """Recupera dal DB tutti gli album già salvati per un dato artista (per ID YouTube)."""
     response = requests.get(f"https://be.heardleitalia.com/api/heardle/album?youtubeArtistId={artistId}")
-    response = response.json()
-    if response.get("data") is None:
-        log.error("Errore album per artista %s: %s", artistId, response.get("errorMessage", "Unknown error"))
+    data = response.json()
+    if data.get("data") is None:
+        if data.get("errorMessage") != "Artist not found":
+            log.error("Errore album per artista %s: %s", artistId, data.get("errorMessage", "Unknown error"))
         return []
-    return response["data"]["albums"]
+    return data["data"]["albums"]
 
 
 def getAllAlbumArtistsInYouTube(artistIdYouTube):
@@ -75,11 +77,7 @@ def filtraFeaturing(featuring, idArtista):
     Rimuove dalla lista dei featuring l'artista principale e le voci senza ID.
     Restituisce [] se la lista risultante è vuota.
     """
-    for artist in featuring:
-        if artist["id"] == idArtista or artist["id"] is None:
-            featuring.remove(artist)
-    if len(featuring) == 0 or featuring is None:
-        return []
+    featuring = [a for a in featuring if a["id"] != idArtista and a["id"] is not None]
     return featuring
 
 
@@ -132,7 +130,7 @@ def getSongsOfAlbum(albumBrowseId, artistName, artistaChannelId, idAlbum):
             continue
         # Salta versioni alternative che non vogliamo indicizzare
         title_lower = song["title"].lower()
-        if "live" in title_lower or "remix" in title_lower or "remastered" in title_lower:
+        if re.search(r"\blive\b|\bremix\b|\bremastered\b", title_lower):
             continue
 
         newSong = {
@@ -175,10 +173,10 @@ def writeJSON(obj, filename):
 if __name__ == "__main__":
     # Carica gli artisti dal DB e unisce quelli nuovi definiti localmente in newArtists.json
     allArtists = getAllArtists()
-    newArtists_path = os.path.join(os.path.dirname(__file__), "newArtists.json")
+    newArtists_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "newArtists.json")
     newArtists = json.load(open(newArtists_path, "r", encoding="utf-8"))
     newArtistIds = {a["youtubeArtistId"] for a in newArtists}
-    allArtists = newArtists + allArtists
+    allArtists = newArtists + [a for a in allArtists if a["youtubeArtistId"] not in newArtistIds]
 
     log.info("Avvio elaborazione: %d artisti totali (%d nuovi)", len(allArtists), len(newArtists))
 
@@ -188,8 +186,7 @@ if __name__ == "__main__":
         try:
             # Recupera gli album dell'artista sia da YouTube che dal DB
             allAlbumYoutube = getAllAlbumArtistsInYouTube(artist["youtubeArtistId"])
-            isNew = artist["youtubeArtistId"] in newArtistIds
-            allAlbumDB = [] if isNew else getAllAlbumOfArtistInDB(artist["youtubeArtistId"])
+            allAlbumDB = getAllAlbumOfArtistInDB(artist["youtubeArtistId"])
 
             if len(allAlbumYoutube) == 0:
                 log.warning("Artista %s: nessun album trovato su YouTube", artist["name"])

@@ -5,10 +5,14 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir requests ytmusicapi
+# Installa le dipendenze prima di copiare il codice per sfruttare la cache dei layer
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app/dbUpdater/
+COPY dbUpdater/ ./dbUpdater/
+COPY newArtists.json .
 
-RUN mkdir -p /app/ArtistiRevisionati /app/ArtistiSongSent
+# Fallback se si usa docker run senza compose (con compose i bind mount hanno la precedenza)
+RUN mkdir -p ArtistiRevisionati ArtistiSongSent
 
 CMD ["python", "-m", "dbUpdater.main"]

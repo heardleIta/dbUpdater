@@ -1,0 +1,9 @@
+.git/
+.gitignore
+ArtistiRevisionati/
+ArtistiSongSent/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+docker-compose.yml
