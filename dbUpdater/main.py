@@ -12,7 +12,7 @@ from .send import sender
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
+    format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 log = logging.getLogger(__name__)
@@ -199,8 +199,11 @@ if __name__ == "__main__":
                 if a.get("playlistId") is not None and a.get("playlistId") not in albumDBIds
             ]
 
+            log.info(
+                "Artista %s: %d album su YouTube, %d già nel DB, %d nuovi",
+                artist["name"], len(allAlbumYoutube), len(allAlbumDB), len(filteredYTAlbums),
+            )
             if filteredYTAlbums:
-                log.info("Artista %s: %d album da aggiungere", artist["name"], len(filteredYTAlbums))
                 for albumYTFiltered in filteredYTAlbums:
                     songs = getSongsOfAlbum(
                         albumYTFiltered["browseId"],
@@ -208,12 +211,18 @@ if __name__ == "__main__":
                         artistaChannelId=artist["youtubeArtistId"],
                         idAlbum=albumYTFiltered["playlistId"],
                     )
+                    log.info(
+                        "  Album '%s' (%s): %d canzoni trovate",
+                        albumYTFiltered.get("title", "?"), albumYTFiltered["playlistId"], len(songs),
+                    )
                     allSongs += songs
                 if allSongs:
                     writeJSON(allSongs, f"{artist['name']}.json")
-                    log.info("Artista %s: %d canzoni salvate", artist["name"], len(allSongs))
+                    log.info("Artista %s: %d canzoni totali salvate nel JSON", artist["name"], len(allSongs))
+                else:
+                    log.warning("Artista %s: album trovati ma nessuna canzone valida (tutte saltate?)", artist["name"])
             else:
-                log.info("Artista %s: nessun album nuovo", artist["name"])
+                log.info("Artista %s: nessun album nuovo, skip", artist["name"])
 
         except Exception as e:
             log.error("Errore per l'artista %s (id: %s): %s", artist["name"], artist["youtubeArtistId"], e)

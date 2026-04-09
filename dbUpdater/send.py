@@ -41,6 +41,7 @@ def sendArtist(artista, key):
             file.close()
             os.makedirs(ARTISTI_SENT, exist_ok=True)
             shutil.move(filepath, os.path.join(ARTISTI_SENT, artista))
+            log.info("  OK: %d canzoni inviate in %.2fs", length, duration)
         else:
             log.error("Errore invio %s: HTTP %d", artista, response.status_code)
             try:
