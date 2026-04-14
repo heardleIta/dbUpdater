@@ -8,6 +8,7 @@ import tempfile
 
 import requests
 from ytmusicapi import YTMusic
+from ytmusicapi.auth.oauth import OAuthCredentials
 
 from . import ARTISTI_REVISIONATI
 from .send import sender
@@ -32,7 +33,7 @@ if _oauth_raw:
         _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8")
         _tmp.write(base64.b64decode(_oauth_raw).decode("utf-8"))
         _tmp.close()
-        _yt_auth = YTMusic(auth=_tmp.name, location="IT")
+        _yt_auth = YTMusic(auth=_tmp.name, location="IT", oauth_credentials=OAuthCredentials())
         os.unlink(_tmp.name)
         log.info("Client autenticato caricato da variabile d'ambiente YTMUSIC_OAUTH")
     except Exception as e:
@@ -40,7 +41,7 @@ if _oauth_raw:
 else:
     _OAUTH_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "oauth.json")
     if os.path.exists(_OAUTH_PATH):
-        _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT")
+        _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT", oauth_credentials=OAuthCredentials())
         log.info("Client autenticato caricato da %s", _OAUTH_PATH)
     else:
         log.warning("Nessuna auth trovata — isSongPlayable userà il client non autenticato")

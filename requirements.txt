@@ -1,2 +1,2 @@
 requests
-ytmusicapi
+ytmusicapi==1.8.2
