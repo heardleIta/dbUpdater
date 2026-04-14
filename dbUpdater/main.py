@@ -8,7 +8,6 @@ import requests
 from ytmusicapi import YTMusic
 
 from . import ARTISTI_REVISIONATI
-from .lyrics import process_lyrics
 from .send import sender
 
 logging.basicConfig(
@@ -240,7 +239,6 @@ if __name__ == "__main__":
                     allSongs += songs
                 if allSongs:
                     writeJSON(allSongs, f"{artist['name']}.json")
-                    process_lyrics(allSongs, artist["name"], num_threads=min(len(filteredYTAlbums), 2))
                     log.info("Artista %s: %d canzoni totali salvate nel JSON", artist["name"], len(allSongs))
                 else:
                     log.warning("Artista %s: album trovati ma nessuna canzone valida (tutte saltate?)", artist["name"])
