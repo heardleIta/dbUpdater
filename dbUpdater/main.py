@@ -8,6 +8,7 @@ import requests
 from ytmusicapi import YTMusic
 
 from . import ARTISTI_REVISIONATI
+from .lyrics import process_lyrics
 from .send import sender
 
 logging.basicConfig(
@@ -18,7 +19,8 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # Client YouTube Music usato per tutte le chiamate all'API di YTMusic
-yt = YTMusic()
+# location="IT" imposta il mercato italiano per la disponibilità dei brani
+yt = YTMusic(language="it", location="IT")
 
 
 def getAllArtists():
@@ -116,6 +118,21 @@ def getThumbnail(thumbnails):
     return url
 
 
+def isSongPlayable(videoId: str) -> bool:
+    """
+    Verifica che una canzone sia riproducibile tramite YTMusic.get_song.
+    Controlla che playabilityStatus.status == 'OK' e playableInEmbed == True.
+    In caso di errore nella chiamata, considera la canzone non riproducibile.
+    """
+    try:
+        song_info = yt.get_song(videoId)
+        playability = song_info.get("playabilityStatus", {})
+        return playability.get("status") == "OK" and playability.get("playableInEmbed") is True
+    except Exception as e:
+        log.warning("Impossibile verificare la riproducibilità di %s: %s", videoId, e)
+        return False
+
+
 def getSongsOfAlbum(albumBrowseId, artistName, artistaChannelId, idAlbum):
     """
     Recupera le tracce di un album da YouTube Music e le formatta per il DB.
@@ -131,6 +148,11 @@ def getSongsOfAlbum(albumBrowseId, artistName, artistaChannelId, idAlbum):
         # Salta versioni alternative che non vogliamo indicizzare
         title_lower = song["title"].lower()
         if re.search(r"\blive\b|\bremix\b|\bremastered\b", title_lower):
+            continue
+
+        # Verifica che la canzone sia riproducibile nel mercato IT
+        if not isSongPlayable(song["videoId"]):
+            log.warning("  Canzone '%s' (%s) non riproducibile, saltata", song["title"], song["videoId"])
             continue
 
         newSong = {
@@ -218,6 +240,7 @@ if __name__ == "__main__":
                     allSongs += songs
                 if allSongs:
                     writeJSON(allSongs, f"{artist['name']}.json")
+                    process_lyrics(allSongs, artist["name"], num_threads=min(len(filteredYTAlbums), 2))
                     log.info("Artista %s: %d canzoni totali salvate nel JSON", artist["name"], len(allSongs))
                 else:
                     log.warning("Artista %s: album trovati ma nessuna canzone valida (tutte saltate?)", artist["name"])
@@ -228,5 +251,5 @@ if __name__ == "__main__":
             log.error("Errore per l'artista %s (id: %s): %s", artist["name"], artist["youtubeArtistId"], e)
 
     log.info("Elaborazione completata. Avvio invio al backend...")
-    # Invia al backend tutti i file JSON generati nella cartella ArtistiRevisionati
+
     sender()
