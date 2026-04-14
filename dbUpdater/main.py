@@ -21,16 +21,23 @@ log = logging.getLogger(__name__)
 # location="IT" imposta il mercato italiano per la disponibilità dei brani
 yt = YTMusic(location="IT")
 
-# Client autenticato usato esclusivamente per isSongPlayable.
-# Necessario perché get_song() senza auth dipende dall'IP del server (ignora location="IT").
-# Setup una tantum: python -c "from ytmusicapi import YTMusic; YTMusic.setup_oauth(filepath='oauth.json')"
-_OAUTH_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "oauth.json")
-if os.path.exists(_OAUTH_PATH):
-    _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT")
-    log.info("Client autenticato caricato da %s", _OAUTH_PATH)
+# Client autenticato per isSongPlayable.
+# Priorità: 1) variabile d'ambiente YTMUSIC_OAUTH  2) file oauth.json locale
+_yt_auth = None
+_oauth_raw = os.environ.get("YTMUSIC_OAUTH")
+if _oauth_raw:
+    try:
+        _yt_auth = YTMusic(auth=json.loads(_oauth_raw), location="IT")
+        log.info("Client autenticato caricato da variabile d'ambiente YTMUSIC_OAUTH")
+    except Exception as e:
+        log.error("YTMUSIC_OAUTH non valido: %s", e)
 else:
-    _yt_auth = None
-    log.warning("oauth.json non trovato — isSongPlayable userà il client non autenticato (risultati dipendenti dall'IP)")
+    _OAUTH_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "oauth.json")
+    if os.path.exists(_OAUTH_PATH):
+        _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT")
+        log.info("Client autenticato caricato da %s", _OAUTH_PATH)
+    else:
+        log.warning("Nessuna auth trovata — isSongPlayable userà il client non autenticato")
 
 
 def getAllArtists():
