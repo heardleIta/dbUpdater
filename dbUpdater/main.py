@@ -117,24 +117,17 @@ def getThumbnail(thumbnails):
     return url
 
 
+
 def isSongPlayable(videoId: str) -> bool:
-    """
-    Verifica che una canzone sia riproducibile tramite YTMusic.get_song.
-    Controlla che playabilityStatus.status == 'OK' e playableInEmbed == True.
-    In caso di errore nella chiamata, considera la canzone non riproducibile.
-    """
+    """Restituisce False solo se YouTube conferma esplicitamente che la traccia è non riproducibile."""
     try:
-        song_info = yt.get_song(videoId)
-        playability = song_info.get("playabilityStatus", {})
-        status = playability.get("status")
-        embeddable = playability.get("playableInEmbed")
-        if status != "OK" or embeddable is not True:
-            log.warning("  Non riproducibile %s — status=%s playableInEmbed=%s", videoId, status, embeddable)
+        playability = yt.get_song(videoId).get("playabilityStatus", {})
+        if playability.get("status") == "UNPLAYABLE":
+            log.warning("  Canzone %s non riproducibile (UNPLAYABLE), saltata", videoId)
             return False
-        return True
     except Exception as e:
-        log.warning("Impossibile verificare la riproducibilità di %s: %s", videoId, e)
-        return False
+        log.debug("get_song fallito per %s: %s", videoId, e)
+    return True
 
 
 def getSongsOfAlbum(albumBrowseId, artistName, artistaChannelId, idAlbum):
@@ -154,9 +147,7 @@ def getSongsOfAlbum(albumBrowseId, artistName, artistaChannelId, idAlbum):
         if re.search(r"\blive\b|\bremix\b|\bremastered\b", title_lower):
             continue
 
-        # Verifica che la canzone sia riproducibile nel mercato IT
         if not isSongPlayable(song["videoId"]):
-            log.warning("  Canzone '%s' (%s) non riproducibile, saltata", song["title"], song["videoId"])
             continue
 
         newSong = {
