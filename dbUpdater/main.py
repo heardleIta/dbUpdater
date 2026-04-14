@@ -123,7 +123,7 @@ def isSongPlayable(videoId: str) -> bool:
     try:
         playability = yt.get_song(videoId).get("playabilityStatus", {})
         status = playability.get("status")
-        if status in ("UNPLAYABLE", "LOGIN_REQUIRED"):
+        if status in ("UNPLAYABLE"):
             log.warning("  Canzone %s non riproducibile (status=%s), saltata", videoId, status)
             return False
         if playability.get("playableInEmbed") is False:
