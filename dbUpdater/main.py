@@ -126,7 +126,12 @@ def isSongPlayable(videoId: str) -> bool:
     try:
         song_info = yt.get_song(videoId)
         playability = song_info.get("playabilityStatus", {})
-        return playability.get("status") == "OK" and playability.get("playableInEmbed") is True
+        status = playability.get("status")
+        embeddable = playability.get("playableInEmbed")
+        if status != "OK" or embeddable is not True:
+            log.warning("  Non riproducibile %s — status=%s playableInEmbed=%s", videoId, status, embeddable)
+            return False
+        return True
     except Exception as e:
         log.warning("Impossibile verificare la riproducibilità di %s: %s", videoId, e)
         return False
