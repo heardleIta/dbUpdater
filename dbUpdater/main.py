@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+import tempfile
 
 import requests
 from ytmusicapi import YTMusic
@@ -28,7 +29,11 @@ _yt_auth = None
 _oauth_raw = os.environ.get("YTMUSIC_OAUTH")
 if _oauth_raw:
     try:
-        _yt_auth = YTMusic(auth=json.loads(base64.b64decode(_oauth_raw)), location="IT")
+        _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8")
+        _tmp.write(base64.b64decode(_oauth_raw).decode("utf-8"))
+        _tmp.close()
+        _yt_auth = YTMusic(auth=_tmp.name, location="IT")
+        os.unlink(_tmp.name)
         log.info("Client autenticato caricato da variabile d'ambiente YTMUSIC_OAUTH")
     except Exception as e:
         log.error("YTMUSIC_OAUTH non valido: %s", e)
