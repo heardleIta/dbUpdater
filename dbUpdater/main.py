@@ -1,4 +1,5 @@
 
+import base64
 import json
 import logging
 import os
@@ -27,7 +28,7 @@ _yt_auth = None
 _oauth_raw = os.environ.get("YTMUSIC_OAUTH")
 if _oauth_raw:
     try:
-        _yt_auth = YTMusic(auth=json.loads(_oauth_raw), location="IT")
+        _yt_auth = YTMusic(auth=json.loads(base64.b64decode(_oauth_raw)), location="IT")
         log.info("Client autenticato caricato da variabile d'ambiente YTMUSIC_OAUTH")
     except Exception as e:
         log.error("YTMUSIC_OAUTH non valido: %s", e)
