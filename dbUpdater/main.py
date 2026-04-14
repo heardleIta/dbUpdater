@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 # Client YouTube Music usato per tutte le chiamate all'API di YTMusic
 # location="IT" imposta il mercato italiano per la disponibilità dei brani
-yt = YTMusic()
+yt = YTMusic(location="IT")
 
 
 def getAllArtists():
