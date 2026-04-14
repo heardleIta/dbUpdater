@@ -122,8 +122,12 @@ def isSongPlayable(videoId: str) -> bool:
     """Restituisce False solo se YouTube conferma esplicitamente che la traccia è non riproducibile."""
     try:
         playability = yt.get_song(videoId).get("playabilityStatus", {})
-        if playability.get("status") == "UNPLAYABLE":
-            log.warning("  Canzone %s non riproducibile (UNPLAYABLE), saltata", videoId)
+        status = playability.get("status")
+        if status in ("UNPLAYABLE", "LOGIN_REQUIRED"):
+            log.warning("  Canzone %s non riproducibile (status=%s), saltata", videoId, status)
+            return False
+        if playability.get("playableInEmbed") is False:
+            log.warning("  Canzone %s non incorporabile (playableInEmbed=False), saltata", videoId)
             return False
     except Exception as e:
         log.debug("get_song fallito per %s: %s", videoId, e)
