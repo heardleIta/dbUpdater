@@ -21,6 +21,17 @@ log = logging.getLogger(__name__)
 # location="IT" imposta il mercato italiano per la disponibilità dei brani
 yt = YTMusic(location="IT")
 
+# Client autenticato usato esclusivamente per isSongPlayable.
+# Necessario perché get_song() senza auth dipende dall'IP del server (ignora location="IT").
+# Setup una tantum: python -c "from ytmusicapi import YTMusic; YTMusic.setup_oauth(filepath='oauth.json')"
+_OAUTH_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "oauth.json")
+if os.path.exists(_OAUTH_PATH):
+    _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT")
+    log.info("Client autenticato caricato da %s", _OAUTH_PATH)
+else:
+    _yt_auth = None
+    log.warning("oauth.json non trovato — isSongPlayable userà il client non autenticato (risultati dipendenti dall'IP)")
+
 
 def getAllArtists():
     """Recupera tutti gli artisti presenti nel database dell'applicazione."""
@@ -119,11 +130,15 @@ def getThumbnail(thumbnails):
 
 
 def isSongPlayable(videoId: str) -> bool:
-    """Restituisce False solo se YouTube conferma esplicitamente che la traccia è non riproducibile."""
+    """
+    Verifica la riproducibilità tramite client autenticato (se disponibile).
+    Salta le tracce con status UNPLAYABLE o LOGIN_REQUIRED e playableInEmbed=False.
+    """
+    client = _yt_auth if _yt_auth is not None else yt
     try:
-        playability = yt.get_song(videoId).get("playabilityStatus", {})
+        playability = client.get_song(videoId).get("playabilityStatus", {})
         status = playability.get("status")
-        if status in ("UNPLAYABLE"):
+        if status in ("UNPLAYABLE", "LOGIN_REQUIRED"):
             log.warning("  Canzone %s non riproducibile (status=%s), saltata", videoId, status)
             return False
         if playability.get("playableInEmbed") is False:
