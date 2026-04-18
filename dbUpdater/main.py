@@ -68,8 +68,17 @@ if _yt_auth is None:
             log.error("YTMUSIC_OAUTH non valido: %s", e)
 
 if _yt_auth is None:
-    _OAUTH_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "oauth.json")
-    if os.path.exists(_OAUTH_PATH):
+    _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    _BROWSER_HEADERS_PATH = os.path.join(_ROOT, "browser_headers.json")
+    _OAUTH_PATH = os.path.join(_ROOT, "oauth.json")
+    if os.path.exists(_BROWSER_HEADERS_PATH):
+        try:
+            with open(_BROWSER_HEADERS_PATH, encoding="utf-8") as _f:
+                _yt_auth = YTMusic(auth=_BROWSER_HEADERS_PATH, location="IT")
+            log.info("Client autenticato caricato da %s", _BROWSER_HEADERS_PATH)
+        except Exception as e:
+            log.error("browser_headers.json non valido: %s", e)
+    elif os.path.exists(_OAUTH_PATH):
         _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT", oauth_credentials=OAuthCredentials())
         log.info("Client autenticato caricato da %s", _OAUTH_PATH)
     else:
