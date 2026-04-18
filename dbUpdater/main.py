@@ -311,12 +311,12 @@ def getThumbnail(thumbnails):
 def isSongPlayable(videoId: str) -> bool:
     """
     Verifica la riproducibilità di una traccia tramite get_song.
-    Salta le tracce con status UNPLAYABLE/LOGIN_REQUIRED o playableInEmbed=False.
+    Salta le tracce con status UNPLAYABLE o playableInEmbed=False.
     """
     try:
         playability = _retry_ytmusic(yt.get_song, videoId).get("playabilityStatus", {})
         status = playability.get("status")
-        if status in ("UNPLAYABLE", "LOGIN_REQUIRED"):
+        if status == "UNPLAYABLE":
             log.warning("  Canzone %s non riproducibile (status=%s), saltata", videoId, status)
             return False
         if playability.get("playableInEmbed") is False:
