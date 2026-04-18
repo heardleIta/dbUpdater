@@ -25,20 +25,49 @@ log = logging.getLogger(__name__)
 yt = YTMusic(location="IT")
 
 # Client autenticato per isSongPlayable.
-# Priorità: 1) variabile d'ambiente YTMUSIC_OAUTH  2) file oauth.json locale
+# Priorità: 1) YTMUSIC_HEADERS (browser cookies)  2) YTMUSIC_OAUTH  3) oauth.json locale
 _yt_auth = None
-_oauth_raw = os.environ.get("YTMUSIC_OAUTH")
-if _oauth_raw:
+
+def _load_browser_headers(raw_b64: str) -> "YTMusic | None":
+    """Decodifica YTMUSIC_HEADERS (base64 JSON) e restituisce un client autenticato."""
+    payload = json.loads(base64.b64decode(raw_b64).decode("utf-8"))
+    # Supporta sia dict piatto {"Cookie": "..."} sia il formato requestHeaders di Firefox
+    if isinstance(payload, dict) and "requestHeaders" in payload:
+        headers_list = payload["requestHeaders"]["headers"]
+        headers_dict = {h["name"]: h["value"] for h in headers_list}
+    elif isinstance(payload, list):
+        headers_dict = {h["name"]: h["value"] for h in payload}
+    else:
+        headers_dict = payload
+    _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8")
+    json.dump(headers_dict, _tmp)
+    _tmp.close()
+    client = YTMusic(auth=_tmp.name, location="IT")
+    os.unlink(_tmp.name)
+    return client
+
+_headers_raw = os.environ.get("YTMUSIC_HEADERS")
+if _headers_raw:
     try:
-        _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8")
-        _tmp.write(base64.b64decode(_oauth_raw).decode("utf-8"))
-        _tmp.close()
-        _yt_auth = YTMusic(auth=_tmp.name, location="IT", oauth_credentials=OAuthCredentials())
-        os.unlink(_tmp.name)
-        log.info("Client autenticato caricato da variabile d'ambiente YTMUSIC_OAUTH")
+        _yt_auth = _load_browser_headers(_headers_raw)
+        log.info("Client autenticato caricato da YTMUSIC_HEADERS (browser cookies)")
     except Exception as e:
-        log.error("YTMUSIC_OAUTH non valido: %s", e)
-else:
+        log.error("YTMUSIC_HEADERS non valido: %s", e)
+
+if _yt_auth is None:
+    _oauth_raw = os.environ.get("YTMUSIC_OAUTH")
+    if _oauth_raw:
+        try:
+            _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8")
+            _tmp.write(base64.b64decode(_oauth_raw).decode("utf-8"))
+            _tmp.close()
+            _yt_auth = YTMusic(auth=_tmp.name, location="IT", oauth_credentials=OAuthCredentials())
+            os.unlink(_tmp.name)
+            log.info("Client autenticato caricato da YTMUSIC_OAUTH")
+        except Exception as e:
+            log.error("YTMUSIC_OAUTH non valido: %s", e)
+
+if _yt_auth is None:
     _OAUTH_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "oauth.json")
     if os.path.exists(_OAUTH_PATH):
         _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT", oauth_credentials=OAuthCredentials())
