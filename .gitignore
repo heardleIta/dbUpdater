@@ -17,3 +17,6 @@ test
 
 # Credenziali OAuth — non committare mai
 oauth.json
+
+# Config OpenVPN scaricato da VPN Gate (rigenerato da fetch_vpngate.py)
+vpn/config.ovpn

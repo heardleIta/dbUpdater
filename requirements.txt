@@ -1,2 +1,2 @@
-requests
+requests[socks]
 ytmusicapi==1.8.2

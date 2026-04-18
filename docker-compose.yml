@@ -1,8 +1,35 @@
 services:
+  tor-proxy:
+    image: dperson/torproxy:latest
+    restart: unless-stopped
+    environment:
+      - LOCATION=IT
+      - TZ=Europe/Rome
+      - PASSWORD=tor-heardle-ctl-2026
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf --max-time 10 --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip | grep -q '\"IsTor\":true'"]
+      interval: 30s
+      timeout: 15s
+      start_period: 120s
+      retries: 3
+
   dbupdater:
     build: .
     environment:
       - YTMUSIC_HEADERS=eyJBY2NlcHQiOiAiKi8qIiwgIkFjY2VwdC1MYW5ndWFnZSI6ICJpdC1JVCxpdDtxPTAuOSxlbi1VUztxPTAuOCxlbjtxPTAuNyIsICJDb29raWUiOiAiU09DUz1DQUlTTlFnUkVpdGliM0ZmYVdSbGJuUnBkSGxtY205dWRHVnVaSFZwYzJWeWRtVnlYekl3TWpZd05ERTBMakEwWDNBd0dnSnBkQ0FDR2dZSWdKT0x6d1k7IF9fU2VjdXJlLUJVQ0tFVD1DTVVFOyBZU0M9YUJHcTJtek93U0E7IFZJU0lUT1JfUFJJVkFDWV9NRVRBREFUQT1DZ0pKVkJJaUVoNFNIQXNNRGc4UUVSSVRGQlVXRnhnWkdoc2NIUjRmSUNFaUl5UWxKaWNnREElM0QlM0Q7IFZJU0lUT1JfSU5GTzFfTElWRT15bDBKcGF0M1cwTTsgX19TZWN1cmUtUk9MTE9VVF9UT0tFTj1DTjNkbXBtOTJNbTl5UUVRanVDUzNZWDNrd01ZMHVpWTNvWDNrd00lM0Q7IFNULTFhamx1czQ9Y3NuPTN5bUs2cGNlR290WHpkRVgmaXRjdD1DTUlDRVBpUkJSZ0JJaE1JN3BXNzRZWDNrd01WUXRKSkJ4MElsUVpSeWdFRVhjOVl4QSUzRCUzRDsgUFJFRj1yZXBlYXQ9Tk9ORSIsICJVc2VyLUFnZW50IjogIk1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQ7IHJ2OjE0OS4wKSBHZWNrby8yMDEwMDEwMSBGaXJlZm94LzE0OS4wIiwgIlgtR29vZy1WaXNpdG9yLUlkIjogIkNndDViREJLY0dGME0xY3dUU2l5a28zUEJqSW9DZ0pKVkJJaUVoNFNIQXNNRGc4UUVSSVRGQlVXRnhnWkdoc2NIUjRmSUNFaUl5UWxKaWNnREElM0QlM0QiLCAiWC1Zb3V0dWJlLUJvb3RzdHJhcC1Mb2dnZWQtSW4iOiAiZmFsc2UiLCAiWC1Zb3V0dWJlLUNsaWVudC1OYW1lIjogIjY3IiwgIlgtWW91dHViZS1DbGllbnQtVmVyc2lvbiI6ICIxLjIwMjYwNDE0LjA1LjAwIn0=
+      - TOR_PROXY_URL=socks5h://tor-proxy:9050
+      - TOR_CONTROL_HOST=tor-proxy
+      - TOR_CONTROL_PORT=9051
+      - TOR_CONTROL_PASSWORD=tor-heardle-ctl-2026
+    depends_on:
+      tor-proxy:
+        condition: service_healthy
+    networks: [internal]
     volumes:
       - ./ArtistiRevisionati:/app/ArtistiRevisionati
       - ./ArtistiSongSent:/app/ArtistiSongSent
+
+networks:
+  internal:
+    driver: bridge

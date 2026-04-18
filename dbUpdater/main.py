@@ -1,14 +1,15 @@
 
-import base64
 import json
 import logging
 import os
 import re
-import tempfile
+import socket
+import time
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from ytmusicapi import YTMusic
-from ytmusicapi.auth.oauth import OAuthCredentials
 
 from . import ARTISTI_REVISIONATI
 from .send import sender
@@ -20,69 +21,170 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# Client YouTube Music usato per tutte le chiamate all'API di YTMusic
-# location="IT" imposta il mercato italiano per la disponibilità dei brani
-yt = YTMusic(location="IT")
+# Proxy SOCKS5 verso il container tor-proxy. socks5h:// fa risolvere il DNS
+# attraverso Tor, così anche le query per music.youtube.com escono dall'exit IT.
+TOR_PROXY_URL = os.getenv("TOR_PROXY_URL", "socks5h://tor-proxy:9050")
+_PROXIES = {"http": TOR_PROXY_URL, "https": TOR_PROXY_URL}
 
-# Client autenticato per isSongPlayable.
-# Priorità: 1) YTMUSIC_HEADERS (browser cookies)  2) YTMUSIC_OAUTH  3) oauth.json locale
-_yt_auth = None
+TOR_CONTROL_HOST = os.getenv("TOR_CONTROL_HOST", "tor-proxy")
+TOR_CONTROL_PORT = int(os.getenv("TOR_CONTROL_PORT", "9051"))
+TOR_CONTROL_PASSWORD = os.getenv("TOR_CONTROL_PASSWORD", "")
 
-def _load_browser_headers(raw_b64: str) -> "YTMusic | None":
-    """Decodifica YTMUSIC_HEADERS (base64 JSON) e restituisce un client autenticato."""
-    payload = json.loads(base64.b64decode(raw_b64).decode("utf-8"))
-    # Supporta sia dict piatto {"Cookie": "..."} sia il formato requestHeaders di Firefox
-    if isinstance(payload, dict) and "requestHeaders" in payload:
-        headers_list = payload["requestHeaders"]["headers"]
-        headers_dict = {h["name"]: h["value"] for h in headers_list}
-    elif isinstance(payload, list):
-        headers_dict = {h["name"]: h["value"] for h in payload}
-    else:
-        headers_dict = payload
-    _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8")
-    json.dump(headers_dict, _tmp)
-    _tmp.close()
-    client = YTMusic(auth=_tmp.name, location="IT")
-    os.unlink(_tmp.name)
-    return client
 
-_headers_raw = os.environ.get("YTMUSIC_HEADERS")
-if _headers_raw:
-    try:
-        _yt_auth = _load_browser_headers(_headers_raw)
-        log.info("Client autenticato caricato da YTMUSIC_HEADERS (browser cookies)")
-    except Exception as e:
-        log.error("YTMUSIC_HEADERS non valido: %s", e)
+def _build_session() -> requests.Session:
+    """Session con retry HTTP-level (429/5xx) + proxy SOCKS5 montato di default."""
+    s = requests.Session()
+    retry = Retry(
+        total=5, connect=5, read=3, backoff_factor=1.5,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=frozenset(["GET", "POST"]),
+        respect_retry_after_header=True,
+    )
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=4, pool_maxsize=8)
+    s.mount("http://", adapter)
+    s.mount("https://", adapter)
+    s.proxies.update(_PROXIES)
+    return s
 
-if _yt_auth is None:
-    _oauth_raw = os.environ.get("YTMUSIC_OAUTH")
-    if _oauth_raw:
+
+def wait_for_tor(timeout_s: int = 180) -> str:
+    """Attende che Tor abbia un circuito IT funzionante. RuntimeError se fallisce."""
+    deadline = time.monotonic() + timeout_s
+    delay, last_err = 2.0, None
+    while time.monotonic() < deadline:
         try:
-            _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8")
-            _tmp.write(base64.b64decode(_oauth_raw).decode("utf-8"))
-            _tmp.close()
-            _yt_auth = YTMusic(auth=_tmp.name, location="IT", oauth_credentials=OAuthCredentials())
-            os.unlink(_tmp.name)
-            log.info("Client autenticato caricato da YTMUSIC_OAUTH")
+            r = requests.get(
+                "https://check.torproject.org/api/ip",
+                proxies=_PROXIES, timeout=15,
+            )
+            data = r.json()
+            if data.get("IsTor") is True and data.get("IP"):
+                log.info("Tor pronto. Exit IP=%s (ExitNodes={it}, StrictNodes=1)", data["IP"])
+                return data["IP"]
+            last_err = f"not-tor: {data}"
         except Exception as e:
-            log.error("YTMUSIC_OAUTH non valido: %s", e)
+            last_err = repr(e)
+        time.sleep(delay)
+        delay = min(delay * 1.7, 20.0)
+    raise RuntimeError(f"Tor proxy non raggiungibile dopo {timeout_s}s: {last_err}")
 
-if _yt_auth is None:
-    _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    _BROWSER_HEADERS_PATH = os.path.join(_ROOT, "browser_headers.json")
-    _OAUTH_PATH = os.path.join(_ROOT, "oauth.json")
-    if os.path.exists(_BROWSER_HEADERS_PATH):
+
+def _tor_control(command: str) -> str:
+    """Invia un singolo comando al ControlPort di Tor dopo autenticazione."""
+    with socket.create_connection((TOR_CONTROL_HOST, TOR_CONTROL_PORT), timeout=10) as s:
+        f = s.makefile("rwb")
+        f.write(f'AUTHENTICATE "{TOR_CONTROL_PASSWORD}"\r\n'.encode())
+        f.flush()
+        auth = f.readline().decode(errors="replace").strip()
+        if not auth.startswith("250"):
+            raise RuntimeError(f"Tor AUTHENTICATE fallita: {auth}")
+        f.write(f"{command}\r\n".encode())
+        f.flush()
+        return f.readline().decode(errors="replace").strip()
+
+
+def renew_circuit() -> None:
+    """Forza la creazione di un nuovo circuito Tor (rate-limit del NEWNYM ~10s)."""
+    resp = _tor_control("SIGNAL NEWNYM")
+    if not resp.startswith("250"):
+        raise RuntimeError(f"Tor NEWNYM fallita: {resp}")
+    # Il segnale è accettato ma il circuito nuovo richiede qualche secondo per stabilirsi
+    time.sleep(10)
+
+
+def _get_exit_country() -> tuple[str, str]:
+    """
+    Ritorna (ip, country_code) come visto dal GeoIP commerciale (quello che usa YouTube).
+    Prova più provider perché alcuni (es. ipapi.co) rate-limitano le richieste via Tor.
+    """
+    providers = [
+        ("http://ip-api.com/json/?fields=status,countryCode,query", "query", "countryCode"),
+        ("https://ifconfig.co/json", "ip", "country_iso"),
+        ("https://ipapi.co/json/", "ip", "country_code"),
+    ]
+    last_err = None
+    for url, ip_key, cc_key in providers:
         try:
-            with open(_BROWSER_HEADERS_PATH, encoding="utf-8") as _f:
-                _yt_auth = YTMusic(auth=_BROWSER_HEADERS_PATH, location="IT")
-            log.info("Client autenticato caricato da %s", _BROWSER_HEADERS_PATH)
+            r = requests.get(url, proxies=_PROXIES, timeout=20,
+                             headers={"User-Agent": "curl/8.0"})
+            if r.status_code != 200 or not r.text.strip():
+                last_err = f"{url} → HTTP {r.status_code}"
+                continue
+            data = r.json()
+            ip = data.get(ip_key, "") or ""
+            cc = (data.get(cc_key) or "").upper()
+            if ip and cc:
+                return ip, cc
+            last_err = f"{url} → payload incompleto {data}"
         except Exception as e:
-            log.error("browser_headers.json non valido: %s", e)
-    elif os.path.exists(_OAUTH_PATH):
-        _yt_auth = YTMusic(auth=_OAUTH_PATH, location="IT", oauth_credentials=OAuthCredentials())
-        log.info("Client autenticato caricato da %s", _OAUTH_PATH)
-    else:
-        log.warning("Nessuna auth trovata — isSongPlayable userà il client non autenticato")
+            last_err = f"{url} → {e!r}"
+    raise RuntimeError(f"Tutti i provider GeoIP hanno fallito: {last_err}")
+
+
+def _exclude_exit_ips(ips: set[str]) -> None:
+    """Aggiorna a caldo ExcludeExitNodes così NEWNYM non ri-seleziona gli IP già scartati."""
+    if not ips:
+        return
+    value = ",".join(sorted(ips))
+    resp = _tor_control(f'SETCONF ExcludeExitNodes="{value}"')
+    if not resp.startswith("250"):
+        raise RuntimeError(f"Tor SETCONF ExcludeExitNodes fallita: {resp}")
+
+
+def ensure_italian_exit(max_rotations: int = 20) -> str:
+    """
+    Il GeoIP interno di Tor (ExitNodes {it}) non coincide sempre con il GeoIP
+    commerciale usato da YouTube: un nodo può essere classificato IT nel consensus
+    Tor ma DE/FR/etc. secondo MaxMind/ip-api. Qui ruotiamo il circuito finché
+    l'exit risulta davvero IT anche al GeoIP commerciale, escludendo via control
+    port gli IP visti non-IT così che NEWNYM non li ri-scelga.
+    """
+    blacklist: set[str] = set()
+    for attempt in range(1, max_rotations + 1):
+        try:
+            ip, country = _get_exit_country()
+            log.info("Tentativo %d/%d: exit IP=%s country=%s", attempt, max_rotations, ip, country)
+        except Exception as e:
+            log.warning("Lookup GeoIP fallito (tentativo %d): %s — ruoto circuito", attempt, e)
+            renew_circuit()
+            continue
+        if country == "IT":
+            return ip
+        if ip:
+            blacklist.add(ip)
+            _exclude_exit_ips(blacklist)
+        log.warning("Exit non IT (country=%s). Blacklist=%d, rotazione...", country, len(blacklist))
+        renew_circuit()
+    raise RuntimeError(f"Impossibile ottenere un exit IT dopo {max_rotations} rotazioni")
+
+
+def build_ytmusic() -> YTMusic:
+    """YTMusic con Session retry + proxies SOCKS5h. location='IT' per mercato italiano."""
+    return YTMusic(location="IT", requests_session=_build_session(), proxies=_PROXIES)
+
+
+def _retry_ytmusic(fn, *args, attempts: int = 3, base_delay: float = 5.0, **kwargs):
+    """
+    Wrapper per le chiamate YTMusic. Gestisce errori di proxy/connessione
+    (circuito Tor fallito, exit IT congestionato) con backoff esponenziale;
+    l'ultima eccezione ri-emerge così il chiamante a monte può saltare
+    l'artista/album e continuare senza abortire il run.
+    """
+    last = None
+    for i in range(attempts):
+        try:
+            return fn(*args, **kwargs)
+        except (requests.exceptions.ProxyError,
+                requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout) as e:
+            last = e
+            log.warning("Chiamata YTMusic fallita (tentativo %d/%d): %s", i + 1, attempts, e)
+            time.sleep(base_delay * (2 ** i))
+    raise last
+
+
+# yt viene inizializzato nel blocco if __name__ == "__main__" dopo wait_for_tor()
+yt: YTMusic
 
 
 def getAllArtists():
@@ -114,7 +216,7 @@ def getAllAlbumArtistsInYouTube(artistIdYouTube):
       - album già presenti nei risultati diretti
     Normalizza inoltre la chiave 'audioPlaylistId' → 'playlistId' per uniformità.
     """
-    artista_obj = yt.get_artist(channelId=artistIdYouTube)
+    artista_obj = _retry_ytmusic(yt.get_artist, channelId=artistIdYouTube)
     albums = artista_obj.get("albums")
     listaAlbumArtista = []
     if albums is not None:
@@ -122,7 +224,7 @@ def getAllAlbumArtistsInYouTube(artistIdYouTube):
         browseID = albums.get("browseId")
         if params and browseID:
             # L'artista ha molti album: serve una chiamata dedicata per ottenerli tutti
-            listaAlbumArtista = yt.get_artist_albums(channelId=browseID, params=params)
+            listaAlbumArtista = _retry_ytmusic(yt.get_artist_albums, channelId=browseID, params=params)
         else:
             # Gli album sono già inclusi nella risposta principale
             listaAlbumArtista = albums.get("results", [])
@@ -180,15 +282,13 @@ def getThumbnail(thumbnails):
     return url
 
 
-
 def isSongPlayable(videoId: str) -> bool:
     """
-    Verifica la riproducibilità tramite client autenticato (se disponibile).
-    Salta le tracce con status UNPLAYABLE o LOGIN_REQUIRED e playableInEmbed=False.
+    Verifica la riproducibilità di una traccia tramite get_song.
+    Salta le tracce con status UNPLAYABLE/LOGIN_REQUIRED o playableInEmbed=False.
     """
-    client = _yt_auth if _yt_auth is not None else yt
     try:
-        playability = client.get_song(videoId).get("playabilityStatus", {})
+        playability = _retry_ytmusic(yt.get_song, videoId).get("playabilityStatus", {})
         status = playability.get("status")
         if status in ("UNPLAYABLE", "LOGIN_REQUIRED"):
             log.warning("  Canzone %s non riproducibile (status=%s), saltata", videoId, status)
@@ -206,7 +306,7 @@ def getSongsOfAlbum(albumBrowseId, artistName, artistaChannelId, idAlbum):
     Recupera le tracce di un album da YouTube Music e le formatta per il DB.
     Esclude tracce prive di videoId e tracce live, remix o remastered.
     """
-    album_obj = yt.get_album(browseId=albumBrowseId)
+    album_obj = _retry_ytmusic(yt.get_album, browseId=albumBrowseId)
 
     newSongs = []
     for song in album_obj["tracks"]:
@@ -259,6 +359,13 @@ def writeJSON(obj, filename):
 
 
 if __name__ == "__main__":
+    # 1) Tor deve essere raggiungibile con un circuito qualsiasi
+    # 2) ...ma l'exit deve essere realmente IT secondo il GeoIP commerciale,
+    #    non solo secondo il consensus Tor (ruotiamo finché coincidono)
+    wait_for_tor()
+    ensure_italian_exit()
+    yt = build_ytmusic()
+
     # Carica gli artisti dal DB e unisce quelli nuovi definiti localmente in newArtists.json
     allArtists = getAllArtists()
     newArtists_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "newArtists.json")
