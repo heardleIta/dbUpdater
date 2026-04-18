@@ -1,6 +1,3027 @@
 [
   {
-    "name":"Drillionaire",
+    "name":"Nino D'Angelo",
+    "youtubeArtistId":"UCikG-8LZVaGET5bA6ff2B4A"
+  },
+  {
+    "name":"MV Killa",
+    "youtubeArtistId":"UCoFVVV-CDcoEstOuukdvN2A"
+  },
+  {
+    "name":"Mistaman",
+    "youtubeArtistId":"UC3KrbmXEGqDovXG2KS3-eZg"
+  },{
+    "name":"Anthony",
+    "youtubeArtistId":"UCal5uQ5B9YMkZaWWDqkhWig"
+  },
+  {
+    "name":"Franco Ricciardi",
+    "youtubeArtistId":"UCORuz1SOaT6wOKRM0V4ZPsA"
+  },
+  {
+    "name":"Ludovico Einaudi",
+    "youtubeArtistId":"UCQxsahIsaO7_nDwVlFRMQiA"
+  },
+  {
+    "name":"I PATAGARRI",
+    "youtubeArtistId":"UCl_DW_CCR4tmGW2jb1KwmHw"
+  },
+  {
+    "name":"Sergio Caputo",
+    "youtubeArtistId":"UCMCKq5jZMs9mwr3NbLnwFrw"
+  },
+  {
+    "name":"Il Genio",
+    "youtubeArtistId":"UClxOtwG2Mig4DkAyWck76fw"
+  },
+  {
+    "name":"Tricarico",
+    "youtubeArtistId":"UCWGx2x718VDCT3Kwepkmx6Q"
+  },
+  {
+    "name":"Neri per Caso",
+    "youtubeArtistId":"UCMfLWgp5Bm5DIRX1fozU0og"
+  },
+  {
+    "name":"ISKIDO GANG",
+    "youtubeArtistId":"UCaT1FnG3LX8ZcRRcAL3YbTw"
+  },
+  {
+    "name":"Giorgio Vanni",
+    "youtubeArtistId":"UCTjqIIlmHF0J1jl8VZntrKg"
+  },
+  {
+    "name":"Pyrex",
+    "youtubeArtistId":"UC25BpiIfTGZItNjZkAzk2Ww"
+  },
+  {
+    "name":"Wayne",
+    "youtubeArtistId":"UCj04js9u8SfJcgTeoiJbQEg"
+  },
+   {
+    "name": "Lucio Battisti",
+    "youtubeArtistId": "UCl1sOEr-HgDYaw-tSgYnq-Q"
+  },
+  {
+    "name":"TonyPitony",
+    "youtubeArtistId": "UCMSnPwNXOfPbV1hvbE8YYlA"
+  },
+  {
+    "name":"Sayf",
+    "youtubeArtistId": "UC1NJp5kmOi40iq7rq6qLJVA"
+  },
+  {
+    "name":"22simba",
+    "youtubeArtistId": "UCeyJcArYQAUWaZgMd2bCkwQ"
+  },
+  {
+    "name":"Eddie Brock",
+    "youtubeArtistId": "UCYH_-62bSHNkr3W7P0lnBEw"
+  },
+  {
+    "name":"Bugo",
+    "youtubeArtistId": "UC_2wm7FIqvJHX-bumrcU0Aw"
+  },
+  {
+    "name":"Claudio Bisio",
+    "youtubeArtistId": "UCcXsRHqhNVHNnrwVaoXsqfQ"
+  },
+  {
+    "name":"Niko Pandetta",
+    "youtubeArtistId": "UCDuX5tSzDq5MocnAJWQMXtA"
+  },
+  {
+    "name": "Fabrizio De André",
+    "youtubeArtistId": "UCqfEQW48-6aQfGY8p7hB_yg"
+  },
+  {
+    "name": "Lucio Dalla",
+    "youtubeArtistId": "UCKLS3jTDRre0NEc1t8DGKqw"
+  },
+  {
+    "name": "Mina",
+    "youtubeArtistId": "UCdLfHGEUM_1eH0wUcjXcpPg"
+  },
+  {
+  
+    "name": "Adriano Celentano",
+    "youtubeArtistId": "UCR5QeA6I_PAzzsZJJqtS02g"
+  },
+  {
+  
+    "name": "Claudio Baglioni",
+    "youtubeArtistId": "UCid-SSuAFg8gxYmQ9gYEBEA"
+  },
+  {
+  
+    "name": "Raffaella Carrà",
+    "youtubeArtistId": "UCa-fnDJH_jA-0gWdEnUU0ng"
+  },
+  {
+  
+    "name": "Edoardo Bennato",
+    "youtubeArtistId": "UC1UuFitSGddi2s3-SkzHgJg"
+  },
+  {
+  
+    "name": "Pooh",
+    "youtubeArtistId": "UCTC1FGxOIuwPw3Rp_rG4drw"
+  },
+  {
+  
+    "name": "Ennio Morricone",
+    "youtubeArtistId": "UC6wtBSpA_X6XXk0YIHJj4gw"
+  },
+  {
+  
+    "name": "Ricchi E Poveri",
+    "youtubeArtistId": "UCSqGBUO9Ih5lLV1a7MO5PpQ"
+  },
+  {
+  
+    "name": "Francesco Guccini",
+    "youtubeArtistId": "UCnafOlO-zkXtLdBklKQwIIA"
+  },
+  {
+  
+    "name": "Gianni Morandi",
+    "youtubeArtistId": "UCfa9scAsoVoT5_x2D-GyKzw"
+  },
+  {
+  
+    "name": "Massimo Ranieri",
+    "youtubeArtistId": "UCFmS5W49HZ0a3ujNNHNyenQ"
+  },
+  {
+  
+    "name": "Patty Pravo",
+    "youtubeArtistId": "UC8qEG9Phz1B85LpeCB--Rbw"
+  },
+  {
+  
+    "name": "Domenico Modugno",
+    "youtubeArtistId": "UCIxRqMPmTf6lClDuzc4_Puw"
+  },
+  {
+  
+    "name": "Caterina Caselli",
+    "youtubeArtistId": "UCLlVOiS8WZZtCvMu6N7d_EQ"
+  },
+  {
+  
+    "name": "Luigi Tenco",
+    "youtubeArtistId": "UCaSB-1DFBm2nCrOeXC-E-xw"
+  },
+  {
+  
+    "name": "Little Tony",
+    "youtubeArtistId": "UCeuZj0M6qxfgtfcend1o83g"
+  },
+  {
+  
+    "name": "Edoardo Vianello",
+    "youtubeArtistId": "UCkyYOV8ua_q_gwWcBgIJ-eQ"
+  },
+  {
+  
+    "name": "Fausto Leali",
+    "youtubeArtistId": "UCT5ilAqUfM0e8-Px0xZBFhw"
+  },
+  {
+  
+    "name": "Fred Bongusto",
+    "youtubeArtistId": "UCjaEa4W1O3w6i791ByOKRBQ"
+  },
+  {
+  
+    "name": "Claudia Mori",
+    "youtubeArtistId": "UCvLypSDzYaX8fDv7VPVmETw"
+  },
+  {
+  
+    "name": "Enzo Jannacci",
+    "youtubeArtistId": "UCNd0MBa-PhPJ3KbHrnB5yAQ"
+  },
+  {
+  
+    "name": "Equipe 84",
+    "youtubeArtistId": "UC3vosTJI7xjSh9BFArDFuyg"
+  },
+  {
+  
+    "name": "Bruno Lauzi",
+    "youtubeArtistId": "UCtMp_JiDq8u8iYCp9W3td9w"
+  },
+  {
+  
+    "name": "Rita Pavone",
+    "youtubeArtistId": "UCvVBaEaVtjtBP7g7nzZDugg"
+  },
+  {
+  
+    "name": "Peppino Di Capri",
+    "youtubeArtistId": "UCDGu_d4GFulpfrMx-69AUDA"
+  },
+  {
+  
+    "name": "Sergio Endrigo",
+    "youtubeArtistId": "UCmOLlak9dUBtTLaJ6cQ8Svw"
+  },
+  {
+  
+    "name": "Tony Renis",
+    "youtubeArtistId": "UCEH_wtslWTYsPmTDX-NJwgw"
+  },
+  {
+  
+    "name": "Piero Umiliani",
+    "youtubeArtistId": "UCtvfA9qaqQzyADNXIbpJMfw"
+  },
+  {
+  
+    "name": "Jimmy Fontana",
+    "youtubeArtistId": "UCHtWoOjSOMa0jVEnUS9gl_Q"
+  },
+  {
+  
+    "name": "Angelo Ferreri",
+    "youtubeArtistId": "UCaD5tmm8BKpB3vOuNzSHanQ"
+  },
+  {
+  
+    "name": "Nicola Di Bari",
+    "youtubeArtistId": "UCkwWyr2mNrPzK4nSh1bADlg"
+  },
+  {
+  
+    "name": "Iva Zanicchi",
+    "youtubeArtistId": "UCZ7war827to6g_KuXhsWEXQ"
+  },
+  {
+  
+    "name": "Claudio Villa",
+    "youtubeArtistId": "UCylRd4S8SbajEvaJtqYyGcw"
+  },
+  {
+  
+    "name": "Edda Dell'Orso",
+    "youtubeArtistId": "UC-e-ORyNWUYcaTgVnNgAB1A"
+  },
+  {
+  
+    "name": "I Santo California",
+    "youtubeArtistId": "UCGeyXZ7DkAY2oxGlMN6tQLw"
+  },
+  {
+  
+    "name": "Milva",
+    "youtubeArtistId": "UCH1NtjaUPi0Yl0JkKhPSkBQ"
+  },
+  {
+  
+    "name": "Giuliano Sorgini",
+    "youtubeArtistId": "UCg_PvniNccbBGHBQjFbJpIA"
+  },
+  {
+  
+    "name": "Bobby Solo",
+    "youtubeArtistId": "UCr06EnA0XfVaLVDROQLLhWw"
+  },
+  {
+  
+    "name": "I Nuovi Angeli",
+    "youtubeArtistId": "UCqpZLAdxLLpjmzAcIjJVrig"
+  },
+  {
+  
+    "name": "Rocco Granata",
+    "youtubeArtistId": "UCy8f_fic3D2TsjeQG1GW7IQ"
+  },
+  {
+  
+    "name": "I Marc 4",
+    "youtubeArtistId": "UCAFK7i7GYYlXxh1RKj8vo4g"
+  },
+  {
+  
+    "name": "Piero de Palma",
+    "youtubeArtistId": "UCvCUk1ZB_5_OnRUiNTQcWSg"
+  },
+  {
+  
+    "name": "Giuliano Carmignola",
+    "youtubeArtistId": "UC5ciHCqD_-XvEM1qG4nh8mw"
+  },
+  {
+  
+    "name": "Ornella Vanoni",
+    "youtubeArtistId": "UCXjRvvsUD8pqqeEz0JvcG0A"
+  },
+  {
+  
+    "name": "Roberto Vecchioni",
+    "youtubeArtistId": "UC6_jQVom9bSY6Ol8SsFr37A"
+  },
+  {
+  
+    "name": "Mia Martini",
+    "youtubeArtistId": "UCD9a12oFE2A-31Fz0xJ3hyQ"
+  },
+  {
+  
+    "name": "Nomadi",
+    "youtubeArtistId": "UCtWJJVBgGksupRnhZT0yoXw"
+  },
+  {
+  
+    "name": "Luciano Pavarotti",
+    "youtubeArtistId": "UCMBIJyYWAkx9Bk31J2cIy9Q"
+  },
+  {
+  
+    "name": "Giorgio Gaber",
+    "youtubeArtistId": "UCGA5U1H3y8RE1hNzMk-8h1w"
+  },
+  {
+  
+    "name": "Marcella Bella",
+    "youtubeArtistId": "UCgNgIl1cMvKtrKwXOrtTSQQ"
+  },
+  {
+  
+    "name": "Premiata Forneria Marconi",
+    "youtubeArtistId": "UCW0gIUBMbQmn-LXAa2W2_aQ"
+  },
+  {
+  
+    "name": "Gigliola Cinquetti",
+    "youtubeArtistId": "UC4BpydzddlXtiA195Et-amw"
+  },
+  {
+  
+    "name": "Franco Bixio",
+    "youtubeArtistId": "UCvuQUR73SqhTJ6j28MEFqdw"
+  },
+  {
+  
+    "name": "Antonello Venditti",
+    "youtubeArtistId": "UCbF-wLfQYMTNGWA62qwxN7Q"
+  },
+  {
+  
+    "name": "Franco Battiato",
+    "youtubeArtistId": "UCwGkoQ9MwSzYfzyjggq5Haw"
+  },
+  {
+  
+    "name": "Francesco De Gregori",
+    "youtubeArtistId": "UC7UjBjzlIbULzxNAqr9_SRw"
+  },
+  {
+  
+    "name": "Fiorella Mannoia",
+    "youtubeArtistId": "UC-vuv17hR7PvYVlcJG6C9qg"
+  },
+  {
+  
+    "name": "Riccardo Cocciante",
+    "youtubeArtistId": "UCsD2XRqwXLecoICPP3jkPWQ"
+  },
+  {
+  
+    "name": "Franco Califano",
+    "youtubeArtistId": "UC9shTX7VKLPoooilP4BshUw"
+  },
+  {
+  
+    "name": "Alan Sorrenti",
+    "youtubeArtistId": "UCy9Zg-F-tV0t9o6xi1AerpQ"
+  },
+  {
+  
+    "name": "Nino Rota",
+    "youtubeArtistId": "UCTO1PEchntrQlVBW0NwkmoA"
+  },
+  {
+  
+    "name": "Adriano Pappalardo",
+    "youtubeArtistId": "UCN81I7g6isay7z6B4qWk6Mw"
+  },
+  {
+  
+    "name": "Nicola Piovani",
+    "youtubeArtistId": "UCpQe4E-bAqkAy6CiOxOA1yA"
+  },
+  {
+  
+    "name": "I Musici",
+    "youtubeArtistId": "UCvN6AMAxfk2zLqyX39mx5tg"
+  },
+  {
+  
+    "name": "Renato Zero",
+    "youtubeArtistId": "UCQ_jWRhR9xF1iwzxHzGs9OQ"
+  },
+  {
+  
+    "name": "Loretta Goggi",
+    "youtubeArtistId": "UCtV_8Z7cEifL-s7B7WMUiwQ"
+  },
+  {
+  
+    "name": "Ivano Fossati",
+    "youtubeArtistId": "UC_IS596e-UUw612ri70yi4g"
+  },
+  {
+  
+    "name": "Amedeo Minghi",
+    "youtubeArtistId": "UCi8G8I8BLhh6n0XCQcp73OQ"
+  },
+  {
+  
+    "name": "Ivan Graziani",
+    "youtubeArtistId": "UC745qwYWrcj6SjXlodjXLWg"
+  },
+  {
+  
+    "name": "Ron",
+    "youtubeArtistId": "UCuabQgp421lpM4Qyj2Dl9Zg"
+  },
+  {
+  
+    "name": "Riccardo Fogli",
+    "youtubeArtistId": "UCsgKRWGLRm5XbRVOkCXOL9A"
+  },
+  {
+  
+    "name": "Riccardo Del Turco",
+    "youtubeArtistId": "UCJ85D-qrpGpMZ0qvIuzb-BA"
+  },
+  {
+  
+    "name": "Pino Donaggio",
+    "youtubeArtistId": "UCuf8NdhdWULOc0Jv29ShVqg"
+  },
+  {
+  
+    "name": "Peppino Gagliardi",
+    "youtubeArtistId": "UCwb_gAtyWgXPF1KRvz8_BHA"
+  },
+  {
+  
+    "name": "Rino Gaetano",
+    "youtubeArtistId": "UCaNVFrJxwQzN6fGS2S6dC4w"
+  },
+  {
+  
+    "name": "Loredana Bertè",
+    "youtubeArtistId": "UCP2qXE9pVaqG7BNqY2sz2jg"
+  },
+  {
+  
+    "name": "Paolo Conte",
+    "youtubeArtistId": "UCCpjZt_7_sxGuAp_UHevXCw"
+  },
+  {
+  
+    "name": "Lelio Luttazzi",
+    "youtubeArtistId": "UC_eDcYmsFMofK-JidZG_A7w"
+  },
+  {
+  
+    "name": "Umberto Rosario Balsamo",
+    "youtubeArtistId": "UCfKVzzRlCwC2_kwd_Y3Bo7g"
+  },
+  {
+  
+    "name": "Achille Togliani",
+    "youtubeArtistId": "UCiOiD56UKgxsbOv-D5Ibmzw"
+  },
+  {
+  
+    "name": "Drupi",
+    "youtubeArtistId": "UCKnTXcMwX8RCQCoFUtNjCQw"
+  },
+  {
+  
+    "name": "Tony Esposito",
+    "youtubeArtistId": "UCzSA-HDuTeVfmcIqBfCWOjg"
+  },
+  {
+  
+    "name": "Sandro Giacobbe",
+    "youtubeArtistId": "UC4YT8lUcn7-QuhL0AqPzaug"
+  },
+  {
+  
+    "name": "Marino Marini",
+    "youtubeArtistId": "UCmYoZuXvhfvxmNHiK53lT1A"
+  },
+  {
+  
+    "name": "Giuni Russo",
+    "youtubeArtistId": "UCERcA5-UqIj-ZPPEKK_8L8Q"
+  },
+  {
+  
+    "name": "Renato Carosone",
+    "youtubeArtistId": "UCTf7dVGoyxOrqB1sP1NnBbQ"
+  },
+  {
+  
+    "name": "Al Bano",
+    "youtubeArtistId": "UCx8X5QoAJHnHYuzPaGCDlsA"
+  },
+  {
+  
+    "name": "Alberto Baldan Bembo",
+    "youtubeArtistId": "UCqz-2-4RaDwc1NaS4lqmM7g"
+  },
+  {
+  
+    "name": "Goblin",
+    "youtubeArtistId": "UCV1-ud1_OEv-8VYSX1xC6tw"
+  },
+  {
+  
+    "name": "Paolo Ferrara",
+    "youtubeArtistId": "UC1zn4Q2Mm3X9tTsyezYAO4g"
+  },
+  {
+  
+    "name": "Francesco Gabbani",
+    "youtubeArtistId": "UC-dKGAzxmettJ7hmxHse9-w"
+  },
+  {
+  
+    "name": "Gianna Nannini",
+    "youtubeArtistId": "UCwWPlzwAdPURwoxJqeJy_9g"
+  },
+  {
+  
+    "name": "Mango",
+    "youtubeArtistId": "UC8fM9fQJZUvNlg2CTv-fgWw"
+  },
+  {
+  
+    "name": "Umberto Tozzi",
+    "youtubeArtistId": "UCGWyYooLD4-eRZOo995-yrA"
+  },
+  {
+  
+    "name": "Matia Bazar",
+    "youtubeArtistId": "UCOsPX6oG2ZcRWbGf9rpcBqQ"
+  },
+  {
+  
+    "name": "Pierangelo Bertoli",
+    "youtubeArtistId": "UCOMarMGu3B40aYCRPE9XH2w"
+  },
+  {
+  
+    "name": "Gianni Bella",
+    "youtubeArtistId": "UC4Rqqe70RlbAyPVfGWjbNLw"
+  },
+  {
+  
+    "name": "Vasco Rossi",
+    "youtubeArtistId": "UCmUrlA_x25EXhvlsRHmC3bw"
+  },
+  {
+  
+    "name": "Fabio Concato",
+    "youtubeArtistId": "UCBbdgQ-QVmwlPnSihL-iJcQ"
+  },
+  {
+  
+    "name": "Gino Paoli",
+    "youtubeArtistId": "UCtIuntH9UCQax1Rap_ToK-g"
+  },
+  {
+  
+    "name": "Donatella Rettore",
+    "youtubeArtistId": "UCoMy0OTwmzIshak-dnbQMDg"
+  },
+  {
+  
+    "name": "Teddy Reno",
+    "youtubeArtistId": "UCb0exxOh9-6Gm83z7QcHwuQ"
+  },
+  {
+  
+    "name": "Anna Oxa",
+    "youtubeArtistId": "UCZ-H1qnrjgW94FwaOPjKuAw"
+  },
+  {
+  
+    "name": "Eugenio Bennato",
+    "youtubeArtistId": "UCvRqwXc2Ui1a3NCyskQgvLg"
+  },
+  {
+  
+    "name": "Pino Daniele",
+    "youtubeArtistId": "UC7_Cx5UF7PvY7mwAm0Iq7rw"
+  },
+  {
+  
+    "name": "Toto Cutugno",
+    "youtubeArtistId": "UCipxp9tEbIVxzVETLEGG7LQ"
+  },
+  {
+  
+    "name": "Alberto Fortis",
+    "youtubeArtistId": "UCYjY80c4pElRHjYTR63g_QA"
+  },
+  {
+  
+    "name": "Aldo Romano",
+    "youtubeArtistId": "UCwKlNKZlbLVPanU1vPMvigw"
+  },
+  {
+  
+    "name": "Gianni Togni",
+    "youtubeArtistId": "UCOBcBmGRz87vialcVEO0G4A"
+  },
+  {
+  
+    "name": "Orietta Berti",
+    "youtubeArtistId": "UCJ4AUghdEgdoQcDledQwMcg"
+  },
+  {
+  
+    "name": "Eduardo De Crescenzo",
+    "youtubeArtistId": "UCIX-31mFbh4YvXBX3T9sbdQ"
+  },
+  {
+  
+    "name": "Luca Barbarossa",
+    "youtubeArtistId": "UCx8Yydkkhff0dR98B-HV3eA"
+  },
+  {
+  
+    "name": "Al Bano And Romina Power",
+    "youtubeArtistId": "UCGJuB3iTePSZlKsYkqSxutg"
+  },
+  {
+  
+    "name": "Enrico Ruggeri",
+    "youtubeArtistId": "UCCSD2cxcCZvO8LwLSwkUzzw"
+  },
+  {
+  
+    "name": "Renzo Arbore",
+    "youtubeArtistId": "UCzDw2W52-Pke6uSa78O7VrA"
+  },
+  {
+  
+    "name": "Stadio",
+    "youtubeArtistId": "UCU-hsVQmuATHtOQBMDOeyFQ"
+  },
+  {
+  
+    "name": "Zucchero",
+    "youtubeArtistId": "UCeZkOBJaUsA1Gu53ky4NguA"
+  },
+  {
+  
+    "name": "Fiordaliso",
+    "youtubeArtistId": "UC27Vwu4Upq1grfmFCDS05qQ"
+  },
+  {
+  
+    "name": "Eros Ramazzotti",
+    "youtubeArtistId": "UCxYCtNOdDsR1zVp4qpj2JFA"
+  },
+  {
+  
+    "name": "Raf",
+    "youtubeArtistId": "UC2Bec7Z1UXWoecQNK1mfEfA"
+  },
+  {
+  
+    "name": "Luca Carboni",
+    "youtubeArtistId": "UCCKG40HMYe_Rxhq1647iOOA"
+  },
+  {
+  
+    "name": "Litfiba",
+    "youtubeArtistId": "UC3InU2sSHtNUvXzr8zRUwTg"
+  },
+  {
+  
+    "name": "Lorella Cuccarini",
+    "youtubeArtistId": "UCas3u8t_1ZNs3TGa4I1sJQA"
+  },
+  {
+  
+    "name": "Jovanotti",
+    "youtubeArtistId": "UC4MtajQrTsHUln-4DhX1Eow"
+  },
+  {
+  
+    "name": "Cristina D'Avena",
+    "youtubeArtistId": "UCXSxZLc5_gy321DlyRNN2zA"
+  },
+  {
+  
+    "name": "Enzo Avitabile",
+    "youtubeArtistId": "UCmwttbN_LAXknwI7Yk-2Z_A"
+  },
+  {
+  
+    "name": "Ivana Spagna",
+    "youtubeArtistId": "UCUWDRPVlHoZ4mnMjUs3fYug"
+  },
+  {
+  
+    "name": "Fred Buscaglione",
+    "youtubeArtistId": "UC2Ws4xJCbqr1YnAOiBmu1Xg"
+  },
+  {
+  
+    "name": "Paola Turci",
+    "youtubeArtistId": "UC_fPTITBZTdNqkvgpnhCJyQ"
+  },
+  {
+  
+    "name": "Ligabue",
+    "youtubeArtistId": "UC55TnrpphIvp3bSuWoq2auw"
+  },
+  {
+  
+    "name": "Tazenda",
+    "youtubeArtistId": "UC62VBJxji76AHWO71fXdkuw"
+  },
+  {
+  
+    "name": "Shiva",
+    "youtubeArtistId": "UCG8dba9iFwcp5UYB76Eu3gA"
+  },
+  {
+  
+    "name": "Biagio Antonacci",
+    "youtubeArtistId": "UCOdcb5P18cvuACmavW2rwtg"
+  },
+  {
+  
+    "name": "Elio e le Storie Tese",
+    "youtubeArtistId": "UChALmD3Q7NkNmvvDPoD7PFA"
+  },
+  {
+  
+    "name": "Gerardina Trovato",
+    "youtubeArtistId": "UCHcmFKTzxYwcjL9QMKWnW-Q"
+  },
+  {
+  
+    "name": "Cecilia Bartoli",
+    "youtubeArtistId": "UCp4mzqcmy23evhZNxAIdN_g"
+  },
+  {
+  
+    "name": "Marco Masini",
+    "youtubeArtistId": "UCeN29g94G5yPdqivVYAFfHw"
+  },
+  {
+  
+    "name": "Vinicio Capossela",
+    "youtubeArtistId": "UCksBTKoWRqs3NxUvXg-p7Gg"
+  },
+  {
+  
+    "name": "CCCP – Fedeli Alla Linea",
+    "youtubeArtistId": "UCIVbMt-453YISrfwps6Th0Q"
+  },
+  {
+  
+    "name": "Piero Pelù",
+    "youtubeArtistId": "UCf_-mzeVxV1mVJ0SEm5-liA"
+  },
+  {
+  
+    "name": "Mietta",
+    "youtubeArtistId": "UCrY3qOU6LKtI89LzWWeMN-w"
+  },
+  {
+  
+    "name": "Punkreas",
+    "youtubeArtistId": "UC_wtgzUUwF4vMhSaMV53HIA"
+  },
+  {
+  
+    "name": "I Girasoli",
+    "youtubeArtistId": "UCH8sPNiZYUTKxbOuu2O4RPQ"
+  },
+  {
+  
+    "name": "Andrea Guerra",
+    "youtubeArtistId": "UCxq_PfUeMFeBePj4IK1Oacw"
+  },
+  {
+  
+    "name": "Paolo Meneguzzi",
+    "youtubeArtistId": "UCX6pMRqvsa0mGW1aGJa2Zqg"
+  },
+  {
+  
+    "name": "Tony Dallara",
+    "youtubeArtistId": "UCYYbYnZOCZohsXuUolF8VTQ"
+  },
+  {
+  
+    "name": "Europa Galante",
+    "youtubeArtistId": "UCT-2o52h-xI_ZNR7aKMaPdw"
+  },
+  {
+  
+    "name": "Frankie hi-nrg mc",
+    "youtubeArtistId": "UCma6b-q1dRaBde8W748OHCA"
+  },
+  {
+  
+    "name": "Pupo",
+    "youtubeArtistId": "UCtuVv2WNWCwPFj7z2yJkSiw"
+  },
+  {
+  
+    "name": "Federico Guglielmo",
+    "youtubeArtistId": "UCaHHcsCfDHSFL4zT9g71cMQ"
+  },
+  {
+  
+    "name": "883",
+    "youtubeArtistId": "UCGLvQtUqrFLmKZ8i1WMbxIQ"
+  },
+  {
+  
+    "name": "Elisa",
+    "youtubeArtistId": "UCLhZNjWYAprq8_Yl6gckviw"
+  },
+  {
+  
+    "name": "Gigi D'Alessio",
+    "youtubeArtistId": "UCPZWAMWSM14bCOWHY_vRz1w"
+  },
+  {
+  
+    "name": "Gigi Finizio",
+    "youtubeArtistId": "UClTyNScfPiBph-f5CywLA9Q"
+  },
+  {
+  
+    "name": "Samuele Bersani",
+    "youtubeArtistId": "UCumHYLka-PdTc9M9gXmqp-g"
+  },
+  {
+  
+    "name": "Nek",
+    "youtubeArtistId": "UCRGJI7pH51ybmOhPMRdJqAA"
+  },
+  {
+  
+    "name": "Tiromancino",
+    "youtubeArtistId": "UCt3xIfdA2cFW8ZSoEUQ2NhA"
+  },
+  {
+  
+    "name": "Alex Britti",
+    "youtubeArtistId": "UCGHPzgNnCEojKkC8JZPUDxA"
+  },
+  {
+  
+    "name": "Laura Pausini",
+    "youtubeArtistId": "UCntqFi4oxous_4tFoNWTfVQ"
+  },
+  {
+  
+    "name": "Articolo 31",
+    "youtubeArtistId": "UCu0qnhrw-4vKa4LFilaQBhg"
+  },
+  {
+  
+    "name": "Afterhours",
+    "youtubeArtistId": "UCcZRkk2d5DrNmN2-oDu8p6g"
+  },
+  {
+  
+    "name": "99 Posse",
+    "youtubeArtistId": "UCckI1OvytSStDWWQuBO8AAw"
+  },
+  {
+  
+    "name": "Sergio Cammariere",
+    "youtubeArtistId": "UCABWZY3JKOL_289PX7zt--A"
+  },
+  {
+  
+    "name": "Riccardo Sinigallia",
+    "youtubeArtistId": "UCjsBkyJHq3pQiLH9CI8O8Pg"
+  },
+  {
+  
+    "name": "Viola Valentino",
+    "youtubeArtistId": "UCfr1_W92RwFWe4PI94mqvGw"
+  },
+  {
+  
+    "name": "Enzo Gragnaniello",
+    "youtubeArtistId": "UCedjNx9o6JZVGgIlGMhiY2w"
+  },
+  {
+  
+    "name": "J-AX",
+    "youtubeArtistId": "UCSGnyF-DDnLkTcpGmghJ8dA"
+  },
+  {
+  
+    "name": "Giorgia",
+    "youtubeArtistId": "UCF5ZKLB6uV8zIAHjJ2o9NHg"
+  },
+  {
+  
+    "name": "Negrita",
+    "youtubeArtistId": "UCTlYeMe9L4yfcI18g6hxrDQ"
+  },
+  {
+  
+    "name": "Andrea Bocelli",
+    "youtubeArtistId": "UCN0yeXZgAizy8VhiLj0-tIg"
+  },
+  {
+  
+    "name": "Daniele Silvestri",
+    "youtubeArtistId": "UC-6KNCu2LakZdtHYt6o17TA"
+  },
+  {
+  
+    "name": "Levante",
+    "youtubeArtistId": "UCmwr_0yvF5G39tPmp9SJfww"
+  },
+  {
+  
+    "name": "Irene Grandi",
+    "youtubeArtistId": "UCp6QDeH7WtDNjVhubiVDxbg"
+  },
+  {
+  
+    "name": "Michele Zarrillo",
+    "youtubeArtistId": "UCw43jqYg5eDirwspsk0HROw"
+  },
+  {
+  
+    "name": "Modena City Ramblers",
+    "youtubeArtistId": "UCeiEGUBRFT5XUOi8pu5Yj2g"
+  },
+  {
+  
+    "name": "Tre Allegri Ragazzi Morti",
+    "youtubeArtistId": "UCtoVbQvtrm9A36Y2Gzu9WDg"
+  },
+  {
+  
+    "name": "Marlene Kuntz",
+    "youtubeArtistId": "UCbsubkLtD7fcMM6NlN2gpKQ"
+  },
+  {
+  
+    "name": "Mario Venuti",
+    "youtubeArtistId": "UCk6Kf5pu2kd_mUy976InMLQ"
+  },
+  {
+  
+    "name": "Zero Assoluto",
+    "youtubeArtistId": "UCol7Nw0NljwYPbeSCzkBU9Q"
+  },
+  {
+  
+    "name": "Gianluca Grignani",
+    "youtubeArtistId": "UCEsDJCcphVIVBdWdwFH5TWQ"
+  },
+  {
+  
+    "name": "Eiffel 65",
+    "youtubeArtistId": "UCTXE5_WDdh06Q8dBiNEvdPQ"
+  },
+  {
+  
+    "name": "Bassi Maestro",
+    "youtubeArtistId": "UCRsJE8oKgL3T8_UG32d0Dhg"
+  },
+  {
+  
+    "name": "Ezio Bosso",
+    "youtubeArtistId": "UC4z8tXGj9OA9m6v2gilD9Pg"
+  },
+
+  {
+  
+    "name": "Rhapsody",
+    "youtubeArtistId": "UCjjuWbTlk-8b_MaGqTBnlsQ"
+  },
+  {
+  
+    "name": "Neffa",
+    "youtubeArtistId": "UC-7bt6iFkPYRviU_814nqBg"
+  },
+  {
+  
+    "name": "Max Gazzè",
+    "youtubeArtistId": "UCDnVH_J2C3JXdl-BFopnPQQ"
+  },
+  {
+  
+    "name": "Carmen Consoli",
+    "youtubeArtistId": "UCAxp3k3eP9pHdLb9G2X1Eyw"
+  },
+  {
+  
+    "name": "Niccolò Fabi",
+    "youtubeArtistId": "UCR4lNHQjdrim7j4tFJ7sx9g"
+  },
+  {
+  
+    "name": "Sud Sound System",
+    "youtubeArtistId": "UCV58-egQyjLhtQnM28Kzvcg"
+  },
+  {
+  
+    "name": "Antonella Ruggiero",
+    "youtubeArtistId": "UCI1sG7S_gYd_7GpfoIpBipQ"
+  },
+  {
+  
+    "name": "Tormento",
+    "youtubeArtistId": "UCscoXkkT_2a6iHwMu3soiwg"
+  },
+  {
+  
+    "name": "Mauro Picotto",
+    "youtubeArtistId": "UCQbL4kJfiuzzdHKdAGpKkhw"
+  },
+  {
+  
+    "name": "Negramaro",
+    "youtubeArtistId": "UC1sPYLIiw_jFn2bLjAbUtKw"
+  },
+  {
+  
+    "name": "Subsonica",
+    "youtubeArtistId": "UCRalVZ_KXnLrl2EthF12bdw"
+  },
+  {
+  
+    "name": "Giovanni Allevi",
+    "youtubeArtistId": "UCks1WRFEEW3NyLXpvuYdqKQ"
+  },
+  {
+  
+    "name": "Piotta",
+    "youtubeArtistId": "UCN3BaeNds6nEezJVrBSKAyw"
+  },
+  {
+  
+    "name": "Brusco",
+    "youtubeArtistId": "UC46EsYVuBLTjk-djqSQBRXQ"
+  },
+  {
+  
+    "name": "Alex Baroni",
+    "youtubeArtistId": "UCVthxduimyqhjVsxZ-0lElA"
+  },
+  {
+  
+    "name": "Cugini Di Campagna",
+    "youtubeArtistId": "UCVJqAGFJPPheaICNsd64mTw"
+  },
+  {
+  
+    "name": "Colle Der Fomento",
+    "youtubeArtistId": "UCZuW7ELcHl9YaH7OTSHWwxA"
+  },
+  {
+  
+    "name": "Marta Sui Tubi",
+    "youtubeArtistId": "UC6R-3hokajBPNB4k3PwBTYw"
+  },
+  {
+  
+    "name": "Paola & Chiara",
+    "youtubeArtistId": "UC2ScHZjMW886933vDDZDFTg"
+  },
+  {
+  
+    "name": "Gemelli Diversi",
+    "youtubeArtistId": "UCqpvOePzZD3oR7GvNWP4kTQ"
+  },
+  {
+  
+    "name": "Bandabardò",
+    "youtubeArtistId": "UCybUMG9F0hjFr25t_EOrRwA"
+  },
+  {
+  
+    "name": "Lacuna Coil",
+    "youtubeArtistId": "UCw1BUVTZt8qPQW6KsZ8UEyg"
+  },
+  {
+  
+    "name": "Sam Paganini",
+    "youtubeArtistId": "UCuBdOKNyv1shz5a-LOkgfdA"
+  },
+  {
+  
+    "name": "Marco Carola",
+    "youtubeArtistId": "UCRi8CaW4UPzKtbw5qxHvV7g"
+  },
+  {
+  
+    "name": "Caparezza",
+    "youtubeArtistId": "UCGsv8l1sq32W1Xptp7ywaNA"
+  },
+  {
+  
+    "name": "Lùnapop",
+    "youtubeArtistId": "UCC6abfXkYHChvqbdThjNNNg"
+  },
+  {
+  
+    "name": "Philip",
+    "youtubeArtistId": "UClS8NZ-ZQDqIHV9MO-uUyQw"
+  },
+  {
+  
+    "name": "Verdena",
+    "youtubeArtistId": "UChf_r1xObvlYS_ezGw_POQw"
+  },
+  {
+  
+    "name": "Inoki",
+    "youtubeArtistId": "UCOk5rCkkFo6GadYoFr1EIhQ"
+  },
+  {
+  
+    "name": "Davide Van De Sfroos",
+    "youtubeArtistId": "UCbR_IC8B0AubBgUYVs8x4Cg"
+  },
+  {
+  
+    "name": "Cor Veleno",
+    "youtubeArtistId": "UCcwQWPFCDfvRkiK1XN3j9aw"
+  },
+  {
+  
+    "name": "thasup",
+    "youtubeArtistId": "UC4-byhJbUsQsrQm8FPJD0uQ"
+  },
+  {
+  
+    "name": "Fabrizio Moro",
+    "youtubeArtistId": "UCTiVX1eiHWkspR2NASsQujg"
+  },
+  {
+  
+    "name": "Giaime",
+    "youtubeArtistId": "UC1KXmFC-fy7CEtnsP9yRFtg"
+  },
+  {
+  
+    "name": "Baustelle",
+    "youtubeArtistId": "UCXZg-o_TN5fiH3TYDbATZhA"
+  },
+  {
+  
+    "name": "Lortex",
+    "youtubeArtistId": "UCeQ0rtxJpzPS63IcGXtCJHg"
+  },
+  {
+  
+    "name": "Chiara Civello",
+    "youtubeArtistId": "UCJ0Zpd1MqWrqrjZIA40A8Ug"
+  },
+  {
+  
+    "name": "Carmen Giannattasio",
+    "youtubeArtistId": "UCccVc1mB48q-rLn9COaNLSw"
+  },
+  {
+  
+    "name": "Tiziano Ferro",
+    "youtubeArtistId": "UCTwX0nd-YXnpFB9P_8NdzyA"
+  },
+  {
+  
+    "name": "Francesco Renga",
+    "youtubeArtistId": "UCVYZk_OREKABfcuixI9Rg7Q"
+  },
+  {
+  
+    "name": "DJ Shocca",
+    "youtubeArtistId": "UC36BLR5cm2uu6CUtqQyJRgA"
+  },
+  {
+  
+    "name": "The Zen Circus",
+    "youtubeArtistId": "UC4tGcG8dh-B0zs2fYG5W9cQ"
+  },
+  {
+  
+    "name": "Luca Dirisio",
+    "youtubeArtistId": "UCMtMd_RR2SaqZp1mRK3w9qA"
+  },
+  {
+  
+    "name": "Meganoidi",
+    "youtubeArtistId": "UCKs942D4-RxEIdUJj_YlB4g"
+  },
+  {
+  
+    "name": "Cesare Cremonini",
+    "youtubeArtistId": "UC6zahbQP8eI-36w0xCnvxcQ"
+  },
+  {
+  
+    "name": "Fabri Fibra",
+    "youtubeArtistId": "UCugfYxXut2pGCiYtDIiI81Q"
+  },
+  {
+  
+    "name": "Noemi",
+    "youtubeArtistId": "UCe_LP9qlJOVt1RJ4gvaOLKQ"
+  },
+  {
+  
+    "name": "Babaman",
+    "youtubeArtistId": "UCx3gMloTaZIycKSBQu4MyXA"
+  },
+  {
+  
+    "name": "Bambole Di Pezza",
+    "youtubeArtistId": "UC34seyjnaqplNeNlMi9nNiA"
+  },
+  {
+  
+    "name": "Roy Paci",
+    "youtubeArtistId": "UCaf1BfcNJknWGGjxJysz97g"
+  },
+  {
+  
+    "name": "MACE",
+    "youtubeArtistId": "UCKW1PAn-cu-G6xHa4HdpHVg"
+  },
+  {
+  
+    "name": "Cosang",
+    "youtubeArtistId": "UCT9ZgsGd1InUmPryFRfjb0g"
+  },
+  {
+  
+    "name": "Le Vibrazioni",
+    "youtubeArtistId": "UC2yoaGCCAFGg2nuLOLRs96w"
+  },
+  {
+  
+    "name": "Jack The Smoker",
+    "youtubeArtistId": "UCYObCuAj8bwsa3lPkBKThZg"
+  },
+  {
+  
+    "name": "Ex-Otago",
+    "youtubeArtistId": "UC5m4Zp0SxrW9FaZ9E1i3_rA"
+  },
+  {
+  
+    "name": "Anna Tatangelo",
+    "youtubeArtistId": "UCYpiu5BDEnsPFcKCtvR9DhQ"
+  },
+  {
+  
+    "name": "Nesli",
+    "youtubeArtistId": "UCBjxoTWnK9xibU_EOgF_U7Q"
+  },
+  {
+  
+    "name": "Jesto",
+    "youtubeArtistId": "UCYOf2dEqy86_PHHKC2t_ADw"
+  },
+  {
+  
+    "name": "Marchio Bossa",
+    "youtubeArtistId": "UC-SZt2MQHWr9KOvMQYwi0MA"
+  },
+  {
+  
+    "name": "Andrea Cardillo",
+    "youtubeArtistId": "UCbdt9bmljmlYRGjp6e_g7Jg"
+  },
+  {
+  
+    "name": "Guè",
+    "youtubeArtistId": "UCofcyzq7oSJAS4W2rfpuPqg"
+  },
+  {
+  
+    "name": "Gemitaiz",
+    "youtubeArtistId": "UCto4U6E599-1uIJvRdp-rEw"
+  },
+  {
+  
+    "name": "Emis Killa",
+    "youtubeArtistId": "UCFXwopEzLxkAkq3ioeNAiUA"
+  },
+  {
+  
+    "name": "Club Dogo",
+    "youtubeArtistId": "UCj1OAs1S6r3zFNKShIJ4TkA"
+  },
+  {
+  
+    "name": "Jake La Furia",
+    "youtubeArtistId": "UCpVLnWMra2rmdgVnuo2Sffg"
+  },
+  {
+  
+    "name": "Max Pezzali",
+    "youtubeArtistId": "UCnFdqtAU7T13owOPQ6RN7HQ"
+  },
+  {
+  
+    "name": "Modà",
+    "youtubeArtistId": "UCGfuztaUrwSXWq-VESg5E-g"
+  },
+  {
+  
+    "name": "Mondo Marcio",
+    "youtubeArtistId": "UCX1fvfhokxZ3IUI3wVRi_-A"
+  },
+  {
+  
+    "name": "Dargen D'Amico",
+    "youtubeArtistId": "UC6JrnMX6UJ05GtpU-isWYvg"
+  },
+  {
+  
+    "name": "Fido Guido",
+    "youtubeArtistId": "UCjs3dkm9as64bIn_o8udiKg"
+  },
+  {
+  
+    "name": "Vacca",
+    "youtubeArtistId": "UCzHPpivEWaObhbJy54-qOLg"
+  },
+  {
+  
+    "name": "Rinnovamento nello Spirito Santo",
+    "youtubeArtistId": "UCcw-LgFsQgHl0b1xoZcrmfg"
+  },
+  {
+  
+    "name": "Giuseppe Ottaviani",
+    "youtubeArtistId": "UC8wkd6IfSFqDf43i-1K51hw"
+  },
+  {
+  
+    "name": "Talco",
+    "youtubeArtistId": "UCXXtCAUxRHqi3KXjduwiuog"
+  },
+  {
+  
+    "name": "Noyz Narcos",
+    "youtubeArtistId": "UC5-_N4l38iyasppZ5MPILXg"
+  },
+  {
+  
+    "name": "Nitro",
+    "youtubeArtistId": "UCeN_r5ueaRbe7XuEiCbADxw"
+  },
+  {
+  
+    "name": "Gemello",
+    "youtubeArtistId": "UCTd74LBT0ivZe0oCES4Eqog"
+  },
+  {
+  
+    "name": "Don Joe",
+    "youtubeArtistId": "UCAEHvSKTcxYB_rvLIUDaqCg"
+  },
+  {
+  
+    "name": "Ensi",
+    "youtubeArtistId": "UCiFXb0AHuNZ3F8DkkD7BKng"
+  },
+  {
+  
+    "name": "Finley",
+    "youtubeArtistId": "UCHAYfPSh3UwjOOLithRFbxQ"
+  },
+  {
+  
+    "name": "Chicoria",
+    "youtubeArtistId": "UCCLQTmywwxHOSIw2MH0OZTw"
+  },
+  {
+  
+    "name": "Mario Biondi",
+    "youtubeArtistId": "UCbFTa2LMsOWftDxNfJLAVIA"
+  },
+  {
+  
+    "name": "Ghemon",
+    "youtubeArtistId": "UCXMeg9_7KaLufe4p6Ja7vqQ"
+  },
+  {
+  
+    "name": "Metal Carter",
+    "youtubeArtistId": "UCvJxWazNeLvaEAoB28LtyIA"
+  },
+  {
+  
+    "name": "NanowaR of Steel",
+    "youtubeArtistId": "UCWc4wCNn-f4hsdBCqfTjJ_w"
+  },
+  {
+  
+    "name": "Simone Cristicchi",
+    "youtubeArtistId": "UC1f06Z8Y6yGpYIYLrq2NU6A"
+  },
+  {
+  
+    "name": "Marracash",
+    "youtubeArtistId": "UCqnCDXGWUGDV8ONQqMIWZ7A"
+  },
+  {
+  
+    "name": "Coez",
+    "youtubeArtistId": "UCMQMJORoZG0gfjG9mTlx-3A"
+  },
+  {
+  
+    "name": "Shablo",
+    "youtubeArtistId": "UCrQXn08a9hr-915_STsqUUA"
+  },
+  {
+  
+    "name": "Clementino",
+    "youtubeArtistId": "UCQjZxVcn0o5XpCWiSIQZesw"
+  },
+  {
+  
+    "name": "Enrico Nigiotti",
+    "youtubeArtistId": "UCt4Uzrl9GKWz3xcKJK2IjYw"
+  },
+  {
+  
+    "name": "Baby K",
+    "youtubeArtistId": "UC7D_7mB4EVFaniewyNM_mGw"
+  },
+  {
+  
+    "name": "Beba",
+    "youtubeArtistId": "UCt-B6GA1Yj8voSZdzLN1XCQ"
+  },
+  {
+  
+    "name": "Stefano Lentini",
+    "youtubeArtistId": "UCVMXPSt1E2WvM3sGppvaQCw"
+  },
+  {
+  
+    "name": "Dente",
+    "youtubeArtistId": "UCwsH9rx3uNJsbzmE5gkvMMQ"
+  },
+  {
+  
+    "name": "Elodie",
+    "youtubeArtistId": "UCpp_hVn85rzxecW_kFi2fxA"
+  },
+  {
+  
+    "name": "DJ Matrix",
+    "youtubeArtistId": "UCnpDpbEFLd8lz1HIZ-z0ymA"
+  },
+  {
+  
+    "name": "Murubutu",
+    "youtubeArtistId": "UCXn7rhcNoCEkVOWFke5RNUA"
+  },
+  {
+  
+    "name": "Luca Agnelli",
+    "youtubeArtistId": "UC9NK09FFzqnyMKUOoxmobtQ"
+  },
+  {
+  
+    "name": "Selton",
+    "youtubeArtistId": "UCLZMVbTMl9ISVVd3MYy7Ehw"
+  },
+  {
+  
+    "name": "Simone Vitullo",
+    "youtubeArtistId": "UCHewHfP0bP_5ioBj3k3lLHw"
+  },
+  {
+  
+    "name": "Marco Faraone",
+    "youtubeArtistId": "UCZyOmEEo29fFNEOkYkR8HWw"
+  },
+  {
+  
+    "name": "Joseph Capriati",
+    "youtubeArtistId": "UCL39Y_slUAkwBvfDGWcon_Q"
+  },
+  {
+  
+    "name": "Annalisa",
+    "youtubeArtistId": "UC9NwyAgn9Rr4usZjjXOYspg"
+  },
+  {
+  
+    "name": "Emma",
+    "youtubeArtistId": "UCzH13CnhFKwTJ1i0A2394ew"
+  },
+  {
+  
+    "name": "Willie Peyote",
+    "youtubeArtistId": "UCoFFjgKG-SM2eyB4DS0QkqA"
+  },
+  {
+  
+    "name": "Mecna",
+    "youtubeArtistId": "UC05dYkdzueFPc7CJlxlFtxA"
+  },
+  {
+  
+    "name": "Giusy Ferreri",
+    "youtubeArtistId": "UCxcuZThGGsrmnclLeShsIZA"
+  },
+  {
+  
+    "name": "Vasco Brondi",
+    "youtubeArtistId": "UCYG2J63f3XQ00p1gi_HkkeA"
+  },
+  {
+  
+    "name": "Duo bucolico",
+    "youtubeArtistId": "UCxl3lEqY44Eo4oy7uLKqmnw"
+  },
+  {
+  
+    "name": "Sonohra",
+    "youtubeArtistId": "UCaMCULjB3MqruLN_JgyAacg"
+  },
+  {
+  
+    "name": "Bull Brigade",
+    "youtubeArtistId": "UCW1oEiEHj-oy2t2pOj37qCQ"
+  },
+
+  {
+  
+    "name": "Frankyeffe",
+    "youtubeArtistId": "UCJG0-PBeLf0A9XMxvmPdrrA"
+  },
+  {
+  
+    "name": "ANNA",
+    "youtubeArtistId": "UCrBqELGfjmdVc6U1utFnBZg"
+  },
+  {
+  
+    "name": "Fedez",
+    "youtubeArtistId": "UCFp5cfLRDDRFMdb3G1VLbcA"
+  },
+  {
+  
+    "name": "Mahmood",
+    "youtubeArtistId": "UC5ClQW5EnadlHqT7JvmKatQ"
+  },
+  {
+  
+    "name": "Marco Mengoni",
+    "youtubeArtistId": "UCoolLOcYkjU6Y2CiUNlIbAQ"
+  },
+  {
+  
+    "name": "Alessandra Amoroso",
+    "youtubeArtistId": "UCoSBlC3Cs51vwLoYRxpjF4w"
+  },
+  {
+  
+    "name": "Boomdabash",
+    "youtubeArtistId": "UC09ua1Qu01LMXk_quOvkcwg"
+  },
+  {
+  
+    "name": "Brunori Sas",
+    "youtubeArtistId": "UCcVJsw5kFLeuj1Oh5gNLmvg"
+  },
+  {
+  
+    "name": "Mannarino",
+    "youtubeArtistId": "UCW4waw9-BX8HW1unmXxmg4Q"
+  },
+  {
+  
+    "name": "Arisa",
+    "youtubeArtistId": "UCyFqXD5tzvaX06WR30HID1w"
+  },
+  {
+  
+    "name": "Jamil",
+    "youtubeArtistId": "UC6aUcT1FCg2quVnaq5xj3iQ"
+  },
+  {
+  
+    "name": "Claver Gold",
+    "youtubeArtistId": "UCuMbvUjn8Q9wChwHG8lRmXA"
+  },
+  {
+  
+    "name": "Malika Ayane",
+    "youtubeArtistId": "UCcD4TphwW3RQS2b5-Kle00w"
+  },
+  {
+  
+    "name": "Nina Zilli",
+    "youtubeArtistId": "UCKz2GimZeveZ-kqb26VfUAQ"
+  },
+  {
+  
+    "name": "Margherita Vicario",
+    "youtubeArtistId": "UC_18pQBHLC0_97WiQRsgX2g"
+  },
+  {
+  
+    "name": "Chiara Galiazzo",
+    "youtubeArtistId": "UClGg71ln20I9z_VB1i2Iv7w"
+  },
+  {
+  
+    "name": "Danti",
+    "youtubeArtistId": "UCxPiHTJZZTzX6vO_NC-4WyQ"
+  },
+  {
+  
+    "name": "Calibro 35",
+    "youtubeArtistId": "UC6mM2Gf7gXw6BmTqkXpfapQ"
+  },
+  {
+  
+    "name": "Rumatera",
+    "youtubeArtistId": "UCSuYqmKPOcqkfITaPFir6wQ"
+  },
+  {
+  
+    "name": "Giovanni Truppi",
+    "youtubeArtistId": "UC0Hfg8gz3BcYpTGbrokCBFQ"
+  },
+  {
+  
+    "name": "Enrico Sangiuliano",
+    "youtubeArtistId": "UC_z-XE-y8Dzzz2VlMBr3DOQ"
+  },
+  {
+  
+    "name": "Mellow Mood",
+    "youtubeArtistId": "UCuxg5AwtEBYxAlIDuNpWpkA"
+  },
+  {
+  
+    "name": "Piero Pirupa",
+    "youtubeArtistId": "UCo7L2C08t9LJFtPSaoDLBSA"
+  },
+  {
+  
+    "name": "Andrea Farri",
+    "youtubeArtistId": "UCJ1IkCFfU9hh64KdAhHID3w"
+  },
+  {
+  
+    "name": "Fleshgod Apocalypse",
+    "youtubeArtistId": "UCvo0PS83Hp2uMTyuo5IKSow"
+  },
+  {
+  
+    "name": "Eddy M",
+    "youtubeArtistId": "UCUHQ_21_GNJZElRgxa94fzQ"
+  },
+  {
+  
+    "name": "Luchè",
+    "youtubeArtistId": "UCF32sV4o8K7Ykbk7kZup-Tg"
+  },
+  {
+  
+    "name": "Rasty Kilo",
+    "youtubeArtistId": "UCeFvlMsZYdpDxwjVnRCMnUQ"
+  },
+  {
+  
+    "name": "Rancore",
+    "youtubeArtistId": "UCdu9bbIMTvi96lhTwfATObA"
+  },
+  {
+  
+    "name": "Cosmo",
+    "youtubeArtistId": "UCnNMf_9rn6tFnawy3ScDNWQ"
+  },
+  {
+  
+    "name": "Dimartino",
+    "youtubeArtistId": "UCIKk-u-yWom2JYmlRvumNvg"
+  },
+  {
+  
+    "name": "Il Volo",
+    "youtubeArtistId": "UC0p-xiJiMjLs5EO-vzBcdWw"
+  },
+  {
+  
+    "name": "En?gma",
+    "youtubeArtistId": "UCL1Ipz2vPVr7NQCGim2ta1A"
+  },
+  {
+  
+    "name": "Lo Stato Sociale",
+    "youtubeArtistId": "UCMY89PxbqRYn8bQTwhiT0TQ"
+  },
+  {
+  
+    "name": "BIG P",
+    "youtubeArtistId": "UCx61gXG1DytNY2-5IAQ5QjA"
+  },
+  {
+  
+    "name": "Iosonouncane",
+    "youtubeArtistId": "UC9WkjUaEHEuVcQvK6u5boqQ"
+  },
+  {
+  
+    "name": "Gidge",
+    "youtubeArtistId": "UCx8EjB10TJvwgaXRLQNnJDQ"
+  },
+  {
+  
+    "name": "Salmo",
+    "youtubeArtistId": "UCeUme4ODz03aMX72dZWXsFw"
+  },
+  {
+  
+    "name": "Ernia",
+    "youtubeArtistId": "UCdRHhpvK_qXXH8xelXn_9Xg"
+  },
+  {
+  
+    "name": "Nayt",
+    "youtubeArtistId": "UCCvTbBTHwl0LFrWpWs6oglA"
+  },
+  {
+  
+    "name": "Rocco Hunt",
+    "youtubeArtistId": "UC35dUmrV7oynGKptFYeVxZA"
+  },
+  {
+  
+    "name": "Thegiornalisti",
+    "youtubeArtistId": "UCDeFF20EzMy8XWHI5RKOd-g"
+  },
+  {
+  
+    "name": "Francesca Michielin",
+    "youtubeArtistId": "UCodtDHV0B4OX-28G-NP5-PQ"
+  },
+  {
+  
+    "name": "Slait",
+    "youtubeArtistId": "UCcTDeLeSEJx1k7VgwEhqaBQ"
+  },
+  {
+  
+    "name": "Mezzosangue",
+    "youtubeArtistId": "UCNcRxSjaMfgmbfgrJ55TMAg"
+  },
+  {
+  
+    "name": "I Cani",
+    "youtubeArtistId": "UCO_fQiLberfA258tu6JZOAQ"
+  },
+  {
+  
+    "name": "GionnyScandal",
+    "youtubeArtistId": "UCuo-7h25MpbrTzZ-tLhxT8Q"
+  },
+  {
+  
+    "name": "Deborah de Luca",
+    "youtubeArtistId": "UC-yKOWx-OoRcBCVgi3JAcTQ"
+  },
+  {
+  
+    "name": "Dardust",
+    "youtubeArtistId": "UCpy-_LQmPv3iSsKt-euzOzA"
+  },
+  {
+  
+    "name": "Motta",
+    "youtubeArtistId": "UCUSNWSY9moCXcZTNzOi6Q4g"
+  },
+  {
+  
+    "name": "MadMan",
+    "youtubeArtistId": "UC5UT36RoEO_NR3nuhp9rmVg"
+  },
+  {
+  
+    "name": "Fred De Palma",
+    "youtubeArtistId": "UCp1stouVk4yrzRnWJHf9dow"
+  },
+  {
+  
+    "name": "Il Pagante",
+    "youtubeArtistId": "UCVVb5YyOx-1dqv17ZGxgNGg"
+  },
+  {
+  
+    "name": "Mostro",
+    "youtubeArtistId": "UCl9cLk5-SogHdpOVLrHEaEw"
+  },
+  {
+  
+    "name": "Charlie Charles",
+    "youtubeArtistId": "UCoyM2hO4AJ8Oj1TyEmaVp_g"
+  },
+  {
+  
+    "name": "Colapesce",
+    "youtubeArtistId": "UCoSxJeDnx_TS7IufH2DUw7Q"
+  },
+  {
+  
+    "name": "Diodato",
+    "youtubeArtistId": "UCDD4g41zThpixPyEbkmSNFw"
+  },
+  {
+  
+    "name": "lowlow",
+    "youtubeArtistId": "UCHf2CN7jOw67cJ-CC4MqBPw"
+  },
+  {
+  
+    "name": "Briga",
+    "youtubeArtistId": "UCfKmNzcQc8xc_HP6959Y22w"
+  },
+  {
+  
+    "name": "Management",
+    "youtubeArtistId": "UC8JJ56jBh3LOPutRMkeVBWg"
+  },
+  {
+  
+    "name": "Giordana Angi",
+    "youtubeArtistId": "UClQoiqX7b8J7mfeRzb7cjWw"
+  },
+  {
+  
+    "name": "Il Cile",
+    "youtubeArtistId": "UCE-PFNzWEmQsyL6fuqLR6yw"
+  },
+  {
+  
+    "name": "Wind Rose",
+    "youtubeArtistId": "UCdAggYOsJb6fRlADpIinxlQ"
+  },
+  {
+  
+    "name": "Bianca Atzei",
+    "youtubeArtistId": "UCPMHKsK5NOmgey48ZQPuZvA"
+  },
+  {
+  
+    "name": "Blue Virus",
+    "youtubeArtistId": "UCj_4TRZ852icArPjpIVxwXQ"
+  },
+  {
+  
+    "name": "Gonzi",
+    "youtubeArtistId": "UCp-3WV0Ow2T7XEcIJGeHhaw"
+  },
+  {
+  
+    "name": "Giorgia Angiuli",
+    "youtubeArtistId": "UCf_ODW5Fe2k67AB7OnvHv3Q"
+  },
+  {
+  
+    "name": "Lazza",
+    "youtubeArtistId": "UCW4MDafaqzloovglqVnyR0A"
+  },
+  {
+  
+    "name": "Night Skinny",
+    "youtubeArtistId": "UCSG9DYb5rBnvE8BhdrHfM_w"
+  },
+  {
+  
+    "name": "Capo Plaza",
+    "youtubeArtistId": "UCe7uJ_G05_SoncfGmgleTGg"
+  },
+  {
+  
+    "name": "Alfa",
+    "youtubeArtistId": "UCH0oKW9dCvDoU60mWGnYjDg"
+  },
+  {
+  
+    "name": "Achille Lauro",
+    "youtubeArtistId": "UC8GiGmefZ-VA1DXnXNnGCdw"
+  },
+  {
+  
+    "name": "Andry The Hitmaker",
+    "youtubeArtistId": "UCzSrhXGdTbyA4vnNEttau8Q"
+  },
+  {
+  
+    "name": "Enzo Dong",
+    "youtubeArtistId": "UCcmemViIVLiCQ2-vaNCwwyg"
+  },
+  {
+  
+    "name": "Shade",
+    "youtubeArtistId": "UCSuBb_cElw5bl9l0wdF3WLw"
+  },
+  {
+  
+    "name": "Nerone",
+    "youtubeArtistId": "UCjeW_DUAelRYfmOcu7Mmg-w"
+  },
+  {
+  
+    "name": "Michele Bravi",
+    "youtubeArtistId": "UCHABT3EHqIcZ_-UoNzk6YNw"
+  },
+  {
+  
+    "name": "Ermal Meta",
+    "youtubeArtistId": "UCni642rarC5v3IhIHYptrSg"
+  },
+  {
+  
+    "name": "Hell Raton",
+    "youtubeArtistId": "UCVSSBcYWUUfmTpk47TP2ulw"
+  },
+  {
+  
+    "name": "Cranio Randagio",
+    "youtubeArtistId": "UCvxlfge2Iu4aMHYpmLb60kA"
+  },
+  {
+  
+    "name": "L'Officina Della Camomilla",
+    "youtubeArtistId": "UCDDwAuqg4iiYTH21Irr7nGw"
+  },
+  {
+  
+    "name": "Giancane",
+    "youtubeArtistId": "UCeR2vqX4t_eCafXNieRN5Og"
+  },
+  {
+  
+    "name": "Laïoung",
+    "youtubeArtistId": "UC7YNXRiU8Mkx0TBO7dg9s-g"
+  },
+  {
+  
+    "name": "Soviet Soviet",
+    "youtubeArtistId": "UCdhByjIDT8rDCOShUfUGNyg"
+  },
+  {
+  
+    "name": "Sfera Ebbasta",
+    "youtubeArtistId": "UC7-K3cpctiu-1pUllHQqkvg"
+  },
+  {
+  
+    "name": "Pinguini Tattici Nucleari",
+    "youtubeArtistId": "UCmlZgTsp0PZnbcQpvv-CyCA"
+  },
+  {
+  
+    "name": "Sick Luke",
+    "youtubeArtistId": "UCzlN8Oz7mP355uFMeexgoxg"
+  },
+  {
+  
+    "name": "Vale Lambo",
+    "youtubeArtistId": "UCCn9WOAoKUrlmt5m3k7rszw"
+  },
+  {
+  
+    "name": "LIBERATO",
+    "youtubeArtistId": "UCbFazDehnEWcS_FMAPHiurw"
+  },
+  {
+  
+    "name": "The Kolors",
+    "youtubeArtistId": "UCEHG_33ePdCtCS6MVRZ-V9A"
+  },
+  {
+  
+    "name": "Benji & Fede",
+    "youtubeArtistId": "UC75CojM8EulYdoRiRYvF32A"
+  },
+  {
+  
+    "name": "Vegas Jones",
+    "youtubeArtistId": "UC7SeEDj2PIbbJQfvX9cOwNQ"
+  },
+  {
+  
+    "name": "La rappresentante di lista",
+    "youtubeArtistId": "UCbJZu91x9AUnW27jERt4rsw"
+  },
+  {
+  
+    "name": "Lorenzo Fragola",
+    "youtubeArtistId": "UCzH4lWaoh9rTDxq-NErab_g"
+  },
+  {
+  
+    "name": "Federica Carta",
+    "youtubeArtistId": "UC_BH3RE5A5Bp348TtxpykDw"
+  },
+  {
+  
+    "name": "L'Elfo",
+    "youtubeArtistId": "UC3HrPPDdpWFlGRLLvCm1rGw"
+  },
+  {
+  
+    "name": "DJ Fastcut",
+    "youtubeArtistId": "UCI8I2nZi6R6y0YNmZXMOzRA"
+  },
+  {
+  
+    "name": "Roberto Surace",
+    "youtubeArtistId": "UCQ9-vflq8xEhTSXAZXyCg2w"
+  },
+  {
+  
+    "name": "Undercatt",
+    "youtubeArtistId": "UCAvGC5ToaWQ_b3YIXfMc-Aw"
+  },
+  {
+  
+    "name": "Tedua",
+    "youtubeArtistId": "UCtj7vV5XiAjb3oHOGT2YwHg"
+  },
+  {
+  
+    "name": "Ghali",
+    "youtubeArtistId": "UCL8aaObaUA14kpqkztGfBYA"
+  },
+  {
+  
+    "name": "Calcutta",
+    "youtubeArtistId": "UCX8vMNtMr03ahuypLwkOXgA"
+  },
+  {
+  
+    "name": "Izi",
+    "youtubeArtistId": "UCQQHBYiaFlGzq3MrQV-CM2Q"
+  },
+  {
+  
+    "name": "Irama",
+    "youtubeArtistId": "UCgYUiM8JCtP8y5Qsi7V9g8A"
+  },
+  {
+  
+    "name": "Franco126",
+    "youtubeArtistId": "UCH5QjDfgypHmdJ2VfcGctEA"
+  },
+  {
+  
+    "name": "Mr.Rain",
+    "youtubeArtistId": "UCSmwv4jgGezWR1vwnmxy70g"
+  },
+  {
+  
+    "name": "Ketama126",
+    "youtubeArtistId": "UCBxK7jSCYkfBshmXArGQt0A"
+  },
+  {
+  
+    "name": "TY1",
+    "youtubeArtistId": "UCBlGzbUy6Imk1RbJQxDXjGQ"
+  },
+  {
+  
+    "name": "MACHETE",
+    "youtubeArtistId": "UCccYMGac9RqlrV_ifIV05jA"
+  },
+  {
+  
+    "name": "AIELLO",
+    "youtubeArtistId": "UCnzeQSGCAvYHJDG8aXkZCaw"
+  },
+  {
+  
+    "name": "BLOODY VINYL",
+    "youtubeArtistId": "UCMf_jKqV7g0J2NiBZ5v1NCg"
+  },
+  {
+  
+    "name": "Federica Abbate",
+    "youtubeArtistId": "UCR898NXAp2bOZjSg31yrkBQ"
+  },
+  {
+  
+    "name": "Ludwig",
+    "youtubeArtistId": "UCj_mAtaNEPHyFxnW0SN2fkg"
+  },
+  {
+  
+    "name": "Peppe Soks",
+    "youtubeArtistId": "UCrr6wTLmmiiq78jT8QtQTvQ"
+  },
+  {
+  
+    "name": "Pop X",
+    "youtubeArtistId": "UCpGRuDWP3Qp2ccqz3WghdxQ"
+  },
+  {
+  
+    "name": "Anto Paga",
+    "youtubeArtistId": "UC123CGM7JH-1xFelfDIsAhw"
+  },
+  {
+  
+    "name": "Mattak",
+    "youtubeArtistId": "UCKBBfPrlvEWt_EoW_s1P-XA"
+  },
+  {
+  
+    "name": "Joan Thiele",
+    "youtubeArtistId": "UC-ZHIw1U7QDGSCuyguqqRYA"
+  },
+  {
+  
+    "name": "Priestess",
+    "youtubeArtistId": "UCZNvWTzRtBeuSI78o3NGj4w"
+  },
+  {
+  
+    "name": "Mathame",
+    "youtubeArtistId": "UCK4ha6pde9QY_DNSSsZsIrw"
+  },
+  {
+  
+    "name": "CIOZ",
+    "youtubeArtistId": "UCz1NSp6f0XPZ_qxgM27bO_g"
+  },
+  {
+  
+    "name": "Takagi & Ketra",
+    "youtubeArtistId": "UCtXnZfAsr3g8KnvzlNHHNOQ"
+  },
+  {
+  
+    "name": "Rose Villain",
+    "youtubeArtistId": "UCCVG9aEMx01DgU-wkusH69w"
+  },
+  {
+  
+    "name": "Gazzelle",
+    "youtubeArtistId": "UCwoeHrDUPwOOrxigiM736BA"
+  },
+  {
+  
+    "name": "Lele Blade",
+    "youtubeArtistId": "UCmEHYuWdDxOaKWQeEp99YGQ"
+  },
+  {
+  
+    "name": "Rkomi",
+    "youtubeArtistId": "UCnLduCh_rrG3Nhqv0nS-NnA"
+  },
+  {
+  
+    "name": "Frah Quintale",
+    "youtubeArtistId": "UCn7St6RuJMNhLN-jST_a3Pw"
+  },
+  {
+  
+    "name": "Sick Budd",
+    "youtubeArtistId": "UCDxnclgsOiBbQ5IwwGG7uwQ"
+  },
+  {
+  
+    "name": "Dark Polo Gang",
+    "youtubeArtistId": "UCJhYG4Yrdcfwuani8RSOavg"
+  },
+  {
+  
+    "name": "Gaia",
+    "youtubeArtistId": "UCWncdZvKs9OuADSW8ryuNUw"
+  },
+  {
+  
+    "name": "Il Tre",
+    "youtubeArtistId": "UCfb0YuM7tKnPTJFdQkN5epQ"
+  },
+  {
+  
+    "name": "Chris Nolan",
+    "youtubeArtistId": "UCx1u2IYXXVnm6E_5EO1zMIg"
+  },
+  {
+  
+    "name": "Side Baby",
+    "youtubeArtistId": "UCcXJ4cK3ibSgjvEwnH8u5Iw"
+  },
+  {
+  
+    "name": "Carl Brave",
+    "youtubeArtistId": "UCh-EDN4aWUWftMj1aEWinFg"
+  },
+  {
+  
+    "name": "Dani Faiv",
+    "youtubeArtistId": "UCCgrbED6nIW19dJx5N33OgQ"
+  },
+  {
+  
+    "name": "Disme",
+    "youtubeArtistId": "UCcT5-52oTc9z2CVYnAVio0Q"
+  },
+  {
+  
+    "name": "Emanuele Aloia",
+    "youtubeArtistId": "UCLxbWWNIQL0eed77GU0cjyQ"
+  },
+  {
+  
+    "name": "Giorgio Poi",
+    "youtubeArtistId": "UCNGqOnZoBRKPp51xOmXDCRQ"
+  },
+  {
+  
+    "name": "Gianni Bismark",
+    "youtubeArtistId": "UCOdALsj8H64UmcNoTnEVi0w"
+  },
+  {
+  
+    "name": "Low Kidd",
+    "youtubeArtistId": "UC2QfnXug5Lcbz-5aiXC2R0g"
+  },
+  {
+  
+    "name": "Canova",
+    "youtubeArtistId": "UC82Ycl9SIwZ3W7BNYpzHEFQ"
+  },
+  {
+  
+    "name": "Fabio Rovazzi",
+    "youtubeArtistId": "UCY8fiime-gtCj7FQR2Mr5_w"
+  },
+  {
+  
+    "name": "M¥SS KETA",
+    "youtubeArtistId": "UCQ9i4XKnqPiXUExrA6tFspQ"
+  },
+  {
+  
+    "name": "Highsnob",
+    "youtubeArtistId": "UCnG1OwGZENLzUZscElRXy4Q"
+  },
+  {
+  
+    "name": "Roshelle",
+    "youtubeArtistId": "UCs9Stpjp66hOBO0QlRN7mbQ"
+  },
+  {
+  
+    "name": "Galeffi",
+    "youtubeArtistId": "UCMtf2nO03RjXk_6-pTGptUg"
+  },
+  {
+  
+    "name": "Skioffi",
+    "youtubeArtistId": "UCxOZqMhKKaq_kbnY9onw-LQ"
+  },
+  {
+  
+    "name": "Astol",
+    "youtubeArtistId": "UCnxnz1vB_IRC435_mLfx65w"
+  },
+  {
+  
+    "name": "Zoda",
+    "youtubeArtistId": "UCd82GMFsBJRZw4MFLA7UwSg"
+  },
+  {
+  
+    "name": "Biondo",
+    "youtubeArtistId": "UCLtD4Z8bsFlXNy7YhsWbLiA"
+  },
+  {
+  
+    "name": "Emma Muscat",
+    "youtubeArtistId": "UCV6XFXOIFIdwNYg67WmqKeQ"
+  },
+  {
+  
+    "name": "Jude & Frank",
+    "youtubeArtistId": "UCHwUrVf2primb-e386vo4pQ"
+  },
+  {
+  
+    "name": "T78",
+    "youtubeArtistId": "UCwmYPFeICSmbpya6jYvisYA"
+  },
+  {
+  
+    "name": "Blackchild (ITA)",
+    "youtubeArtistId": "UC-8HdL8QHSQ9tiUkZvBrvJQ"
+  },
+  {
+  
+    "name": "Tony Effe",
+    "youtubeArtistId": "UCvPAeEB_2bH80nU03YlPvFQ"
+  },
+  {
+  
+    "name": "Ultimo",
+    "youtubeArtistId": "UCv-FuU7xoxY8auq4r66KRFg"
+  },
+  {
+  
+    "name": "Bresh",
+    "youtubeArtistId": "UCFlpoDc1vib_Uk8UfDXzmrw"
+  },
+  {
+  
+    "name": "Dat Boi Dee",
+    "youtubeArtistId": "UCcGftjL4gGzuw8mjt9DwSrw"
+  },
+  {
+  
+    "name": "Silent Bob",
+    "youtubeArtistId": "UCdpqeKxBY4GkfzYA8awHQCw"
+  },
+  {
+  
+    "name": "Måneskin",
+    "youtubeArtistId": "UCqgwdYBhoUHmjrVxNhEUv4g"
+  },
+  {
+  
+    "name": "MamboLosco",
+    "youtubeArtistId": "UC52jUUJxiG811NO_Vn4FXfA"
+  },
+  {
+  
+    "name": "NASKA",
+    "youtubeArtistId": "UCaUCztYzIXQcw34kmJllveA"
+  },
+  {
+  
+    "name": "Mida",
+    "youtubeArtistId": "UCaXJUIIVUife7Gc9BBDzDfg"
+  },
+  {
+  
+    "name": "Coma_Cose",
+    "youtubeArtistId": "UCJeZRS_hD2GCP_XU-R8Nq4Q"
+  },
+  {
+  
+    "name": "Boro",
+    "youtubeArtistId": "UC0Rd8i9qlnaU8fLaNRep8tw"
+  },
+  {
+  
+    "name": "DrefGold",
+    "youtubeArtistId": "UCNqXskOb8HRVRKazwb5Chmg"
+  },
+  {
+  
+    "name": "Gio Evan",
+    "youtubeArtistId": "UCPLYBf4HitFQ8_v20WQA-rQ"
+  },
+  {
+  
+    "name": "Random",
+    "youtubeArtistId": "UC2AEnIMT5XTj3Wi22LNGe4w"
+  },
+  {
+  
+    "name": "Vaz Tè",
+    "youtubeArtistId": "UC_DY2VCgD8_bx4zOr8ZQm3w"
+  },
+  {
+  
+    "name": "FSK SATELLITE",
+    "youtubeArtistId": "UCegKm45QmkcQMl7VeMr9tMg"
+  },
+  {
+  
+    "name": "Nashley",
+    "youtubeArtistId": "UCL9rXdb6cBNIfdZO3SLq3ew"
+  },
+  {
+  
+    "name": "Elettra Lamborghini",
+    "youtubeArtistId": "UC-YjVZ89BPdoqDpUS76NGcA"
+  },
+  {
+  
+    "name": "Peter White",
+    "youtubeArtistId": "UCRh0g5-unLlN9ogxAdXYtBQ"
+  },
+  {
+  
+    "name": "Quentin40",
+    "youtubeArtistId": "UC7y3AjdjAvqVqcyC9uFKQ5w"
+  },
+  {
+  
+    "name": "Generic Animal",
+    "youtubeArtistId": "UCtfSTLHsDt3X0xnm7EUJlSg"
+  },
+  {
+  
+    "name": "rovere",
+    "youtubeArtistId": "UCPM_ui9HYSvO6Ab3U5iVT8A"
+  },
+  {
+  
+    "name": "Pretty Solero",
+    "youtubeArtistId": "UCbIWYGeSbBi3m-t2guulA0g"
+  },
+  {
+  
+    "name": "LGND",
+    "youtubeArtistId": "UCpwU32vf6sJB6JDQpbGVKhg"
+  },
+  {
+  
+    "name": "JUNIOR CALLY",
+    "youtubeArtistId": "UCZtJumLV5-WwX7pyzdlmLGg"
+  },
+  {
+  
+    "name": "Radical",
+    "youtubeArtistId": "UCyiCDko369IU2NbWkeL0nag"
+  },
+  {
+  
+    "name": "Riki",
+    "youtubeArtistId": "UCIx-xg6rt4eGV2Wy4AfxiHA"
+  },
+  {
+  
+    "name": "Masamasa",
+    "youtubeArtistId": "UCwHprHPedkIduWediZGYKag"
+  },
+  {
+  
+    "name": "Mose",
+    "youtubeArtistId": "UCsuAf5zoWG1x1IC98nNnDJQ"
+  },
+  {
+  
+    "name": "Maninni",
+    "youtubeArtistId": "UCb9_OxZnzOXYiOtLop1JTzQ"
+  },
+  {
+  
+    "name": "Fuera",
+    "youtubeArtistId": "UCF1wcbTz9-KLMkUK1zCK1dw"
+  },
+  {
+  
+    "name": "Leonardo Lamacchia",
+    "youtubeArtistId": "UCCx5vvTaRXnjSydpTlwPWLQ"
+  },
+  {
+  
+    "name": "Nyv",
+    "youtubeArtistId": "UC_PMo4GwwR8FUxV78dINO6w"
+  },
+  {
+  
+    "name": "OG Eastbull",
+    "youtubeArtistId": "UCxQe-jasuVsSn81PwiOMTqQ"
+  },
+  {
+  
+    "name": "Vittorio Forte",
+    "youtubeArtistId": "UCNWl3cYlsuQLEVnBtsCXWhQ"
+  },
+  {
+  
+    "name": "Geolier",
+    "youtubeArtistId": "UCcVStX6y07F8-euPi0A7hLA"
+  },
+  {
+  
+    "name": "Tony Boy",
+    "youtubeArtistId": "UCol0OyZYmahOTNfuI1z5PTw"
+  },
+  {
+  
+    "name": "Olly",
+    "youtubeArtistId": "UCNVNAaNubS4A-Myfkm0EpZA"
+  },
+  {
+  
+    "name": "Tananai",
+    "youtubeArtistId": "UC9jHdCMjmX1S0j9bxvNos9Q"
+  },
+  {
+  
+    "name": "VillaBanks",
+    "youtubeArtistId": "UCAHK3VIRER8du89nv9OrrUw"
+  },
+  {
+  
+    "name": "Madame",
+    "youtubeArtistId": "UCPsxk52RUPpJdlS7k0gDWIQ"
+  },
+  {
+  
+    "name": "Yung Snapp",
+    "youtubeArtistId": "UCsiHpI99aQvMtZlOMkMLfWQ"
+  },
+  {
+  
+    "name": "Neima Ezza",
+    "youtubeArtistId": "UCt7qVJiceUtKVKDAbO8a0KQ"
+  },
+  {
+  
+    "name": "Vale Pain",
+    "youtubeArtistId": "UCHzP1RRqIdPkt-OtUuBEghA"
+  },
+  {
+  
+    "name": "chiello",
+    "youtubeArtistId": "UC5uNBLqIjYn4x5VhxaIygPA"
+  },
+  {
+  
+    "name": "Nicola Siciliano",
+    "youtubeArtistId": "UCdXt-UhQ2rHupCW_Pit_YMg"
+  },
+  {
+  
+    "name": "Fasma",
+    "youtubeArtistId": "UCmXRH7w41tG5ARyuLVIBVsw"
+  },
+  {
+  
+    "name": "Venerus",
+    "youtubeArtistId": "UCSdIJKscwpkxq1qmNwW28Cg"
+  },
+  {
+  
+    "name": "Slings",
+    "youtubeArtistId": "UCRhSK8IR_KuOCv4UDzCmctg"
+  },
+  {
+  
+    "name": "Pyrex",
+    "youtubeArtistId": "UCNtLaqedNm6jRGfDYSZg-WQ"
+  },
+  {
+  
+    "name": "Samurai Jay",
+    "youtubeArtistId": "UC3nql4uzUEsOGBBNwZzSlaA"
+  },
+  {
+  
+    "name": "Leon Faun",
+    "youtubeArtistId": "UCRzrD9YBOonI6oW-AwxxoqQ"
+  },
+  {
+  
+    "name": "Rosa Chemical",
+    "youtubeArtistId": "UCRWbaeWu4YlAtXfJho11upg"
+  },
+  {
+  
+    "name": "Drast",
+    "youtubeArtistId": "UCCgwvDzsvZ_F28owKrDQ1GA"
+  },
+  {
+  
+    "name": "167 Gang",
+    "youtubeArtistId": "UCzRLr50kzgub_SrOMmb66JA"
+  },
+  {
+  
+    "name": "Tredici Pietro",
+    "youtubeArtistId": "UCkp6PLyGaOokxGKplIJQLZQ"
+  },
+  {
+  
+    "name": "Taxi B",
+    "youtubeArtistId": "UCV49z0kADuu0vUfGBSScXKA"
+  },
+  {
+  
+    "name": "Sapobully",
+    "youtubeArtistId": "UCJUwUlLwOwfTqw_uzadoT5w"
+  },
+  {
+  
+    "name": "Greg Willen",
+    "youtubeArtistId": "UCEc_I8u3sTTSzPBceul1RwA"
+  },
+  {
+  
+    "name": "Speranza",
+    "youtubeArtistId": "UCf40E1HUuZ7f2thPRGpq5Vw"
+  },
+  {
+  
+    "name": "Ugo Borghetti",
+    "youtubeArtistId": "UCSHBmeIIv5BNtLJvr6TCZKA"
+  },
+  {
+  
+    "name": "Young Hash",
+    "youtubeArtistId": "UC-Z7Z2wC14ga7aRF-fA-CUw"
+  },
+  {
+  
+    "name": "Chadia",
+    "youtubeArtistId": "UC8DGhvKc4VS2H003AfYPrPg"
+  },
+  {
+  
+    "name": "Malsho",
+    "youtubeArtistId": "UCV1hGVHG7AUoaX9yt-fe8kw"
+  },
+  {
+  
+    "name": "Thelonious B.",
+    "youtubeArtistId": "UCUxs_vwDtTL8BuWHB5No3YA"
+  },
+  {
+  
+    "name": "Spender",
+    "youtubeArtistId": "UCx33ZrR6IC_5aL505xSu_FA"
+  },
+  {
+  
+    "name": "Anastasio",
+    "youtubeArtistId": "UCacRQ4vsJkoJCA4pS1ucEow"
+  },
+  {
+  
+    "name": "IRBIS",
+    "youtubeArtistId": "UCPjpNAnLblxJteSlf5mU81w"
+  },
+  {
+  
+    "name": "NDG",
+    "youtubeArtistId": "UCqLezBwXtgvtpNy3d-ixPvg"
+  },
+  {
+  
+    "name": "Sierra",
+    "youtubeArtistId": "UCvh5ihXUaPiQ_hifGUiP21A"
+  },
+  {
+  
+    "name": "Sethu",
+    "youtubeArtistId": "UCdW9GvO--PRNOvaGlmiKtzw"
+  },
+  {
+  
+    "name": "YOUNGGUCCI",
+    "youtubeArtistId": "UCKOnqJs2WFLzFoYkVIUXy0w"
+  },
+  {
+  
+    "name": "DANDY TURNER",
+    "youtubeArtistId": "UC587tGfpHeDafhTtHTdh4AQ"
+  },
+  {
+  
+    "name": "BardoMagno",
+    "youtubeArtistId": "UC8x_4foRJMKvv7H2zWrOinw"
+  },
+  {
+  
+    "name": "Leo Gassmann",
+    "youtubeArtistId": "UCUz_Kjju8r1NltM1UMC79Bw"
+  },
+  {
+  
+    "name": "Federico Baroni",
+    "youtubeArtistId": "UCCeJ5Q-dJewtAAlBSNLb2Ww"
+  },
+  {
+  
+    "name": "Dyzen",
+    "youtubeArtistId": "UCxjPTakWdf5b3DR4FtRt99g"
+  },
+  {
+  
+    "name": "Artie 5ive",
+    "youtubeArtistId": "UCTBoPyeNkz7oOvr7AZVuV3w"
+  },
+  {
+  
+    "name": "Baby Gang",
+    "youtubeArtistId": "UCbOpmfgiFaKQc6h1W9bjEWA"
+  },
+  {
+  
+    "name": "Nerissima Serpe",
+    "youtubeArtistId": "UC_PI4ScqWXzHuYP2TNqw6vg"
+  },
+  {
+  
+    "name": "Paky",
+    "youtubeArtistId": "UCzCxi28Mtdc6RiC9birtbWQ"
+  },
+  {
+  
+    "name": "Massimo Pericolo",
+    "youtubeArtistId": "UCzppYoT30kN99ys5buS2V-w"
+  },
+  {
+  
+    "name": "Rhove",
+    "youtubeArtistId": "UCd-QPboTQvSr3Xh65IvEe-Q"
+  },
+  {
+  
+    "name": "Fulminacci",
+    "youtubeArtistId": "UCtG4HsHqMZw5UCxqYk8o2sw"
+  },
+  {
+  
+    "name": "Il Ghost",
+    "youtubeArtistId": "UCHzy7cwc_Xp8kX_MTp8_gVw"
+  },
+  {
+  
+    "name": "SLF",
+    "youtubeArtistId": "UC3tSEhOhhb2jBjXAgY_1aMQ"
+  },
+  {
+  
+    "name": "BigMama",
+    "youtubeArtistId": "UCgxr5wdjARS2XDa1Nffl5QA"
+  },
+  {
+  
+    "name": "PSICOLOGI",
+    "youtubeArtistId": "UC_1hZmetvHLYRYfkTFU1uew"
+  },
+  {
+  
+    "name": "Mara Sattei",
+    "youtubeArtistId": "UCqJ1Qhhcb0lGm76RZeigFlQ"
+  },
+  {
+  
+    "name": "Diss Gacha",
+    "youtubeArtistId": "UC4B2afNBW7HJNIPqStfGgvg"
+  },
+  {
+  
+    "name": "ARIETE",
+    "youtubeArtistId": "UCNLTKz13np29U1iFbBGNqQA"
+  },
+  {
+  
+    "name": "Sacky",
+    "youtubeArtistId": "UCgn8_kOmcmlRcQA7lbXaMyA"
+  },
+  {
+  
+    "name": "Tommaso Paradiso",
+    "youtubeArtistId": "UCYzipaHlpF98gCD-eH-0VQQ"
+  },
+  {
+  
+    "name": "Holden",
+    "youtubeArtistId": "UCezeCWv8WnaTy0s2vszS5Bg"
+  },
+  {
+  
+    "name": "Skinny",
+    "youtubeArtistId": "UCS9bl_Qjo0pGMl-jKv2WE7Q"
+  },
+  {
+  
+    "name": "Ditonellapiaga",
+    "youtubeArtistId": "UC_C_lEgW7gvrFcCAKTvfrew"
+  },
+  {
+  
+    "name": "Mikush",
+    "youtubeArtistId": "UCRlDXQoW9yhr_GlYFlOVAuw"
+  },
+  {
+  
+    "name": "Luchetto",
+    "youtubeArtistId": "UCP8W1SGWZzGBv9lSXPhBObQ"
+  },
+  {
+  
+    "name": "Aka 7even",
+    "youtubeArtistId": "UCKqrgzh-tAJXeCEUNQSjFpQ"
+  },
+  {
+  
+    "name": "Shaka Muni",
+    "youtubeArtistId": "UChAUiFjCcIxz-Q4BBuaScaw"
+  },
+  {
+  
+    "name": "Poli Ok",
+    "youtubeArtistId": "UCKCHTGp6wxrFkcAaTHKX69w"
+  },
+  {
+  
+    "name": "Tenth Sky",
+    "youtubeArtistId": "UC2TMY-Ac1cj8Eop6PzaFKXg"
+  },
+  {
+  
+    "name": "Tripolare",
+    "youtubeArtistId": "UCeHrkfXNc-zN8Dr9xdmRINg"
+  },
+  {
+  
+    "name": "Abby 6ix",
+    "youtubeArtistId": "UCjUtd5_POyiiABqLzKUgCQw"
+  },
+  {
+  
+    "name": "DARRN",
+    "youtubeArtistId": "UCALZvk4_CWb1CsVWQPxgPNA"
+  },
+  {
+  
+    "name": "Tancredi",
+    "youtubeArtistId": "UCgCJwjQWslQB024VtfSWZsA"
+  },
+  {
+  
+    "name": "Koralle",
+    "youtubeArtistId": "UCgtGrkr69MdWDKCESpawuKw"
+  },
+  {
+  
+    "name": "Papa V",
+    "youtubeArtistId": "UCk5IGkHe7uPbl0mYfTFzWwQ"
+  },
+  {
+  
+    "name": "Angelina Mango",
+    "youtubeArtistId": "UCYTuxG-6zoi7mpmhi3IkDcQ"
+  },
+  {
+  
+    "name": "Fritu",
+    "youtubeArtistId": "UCugPYAOw4Ig_6043IZslywQ"
+  },
+  {
+  
+    "name": "Rondodasosa",
+    "youtubeArtistId": "UC8AfuMru9ltaZkEwpUVpG7w"
+  },
+  {
+  
+    "name": "BLANCO",
+    "youtubeArtistId": "UC3cvw22UbTYbH63m_9a_tAQ"
+  },
+  {
+  
+    "name": "Don Pero",
+    "youtubeArtistId": "UC9ZJFv5YeNv-FHb13i_-m3Q"
+  },
+  {
+  
+    "name": "Medy",
+    "youtubeArtistId": "UC038A0cd2q8uCd4J2Z1tH5w"
+  },
+  {
+  
+    "name": "bnkr44",
+    "youtubeArtistId": "UCxR8taCMUwV04bgqaridNRA"
+  },
+  {
+  
+    "name": "CLARA",
+    "youtubeArtistId": "UCpd_qrK_ARrnjKpAESy2ALg"
+  },
+  {
+  
+    "name": "sangiovanni",
+    "youtubeArtistId": "UC3P_YYlBJaBVV_MHcejbZQg"
+  },
+  {
+  
+    "name": "Marco Castello",
+    "youtubeArtistId": "UCcJm_hZkNyjEdliI3HD51Xw"
+  },
+  {
+  
+    "name": "Matteo Romano",
+    "youtubeArtistId": "UC5YOucJD4JwI3gMgVs2vAiA"
+  },
+  {
+  
+    "name": "MINUR",
+    "youtubeArtistId": "UCxZSRR3rNjgaxqaMjblYoPw"
+  },
+  {
+  
+    "name": "Enzo Benz",
+    "youtubeArtistId": "UCKgbight0iOGEm3au9HY6qw"
+  },
+  {
+  
+    "name": "LDA",
+    "youtubeArtistId": "UCH0W60uBuW63IVMths6Vo9Q"
+  },
+  {
+  
+    "name": "Nello Taver",
+    "youtubeArtistId": "UCALjFrIVJ0H9lo5rpIZiO7A"
+  },
+  {
+  
+    "name": "Tony 2Milli",
+    "youtubeArtistId": "UCcWtLX1gbMtFJapw3EDJZ-A"
+  },
+  {
+  
+    "name": "Kid Yugi",
+    "youtubeArtistId": "UCqOg2w32wuqICG5s2esrz5w"
+  },
+  {
+  
+    "name": "Simba La Rue",
+    "youtubeArtistId": "UCFPNXElOsexP4SB1fhNx8aA"
+  },
+  {
+  
+    "name": "Niky Savage",
+    "youtubeArtistId": "UCQZ4M8YRkeGfdb3wnMokyww"
+  },
+  {
+  
+    "name": "Sadturs",
+    "youtubeArtistId": "UCSYTL7D6QkBTvOVIw4S0MWw"
+  },
+  {
+  
+    "name": "Drillionaire",
     "youtubeArtistId": "UCfewpYEIKE6TFXn2JKI9wIA"
+  },
+  {
+  
+    "name": "Federico Rossi",
+    "youtubeArtistId": "UCHWqBBsw1u4PWOdI_-qVrTg"
+  },
+  {
+  
+    "name": "gIANMARIA",
+    "youtubeArtistId": "UCJONyPVYNdxqRgPITDUcvww"
+  },
+  {
+  
+    "name": "Sillyelly",
+    "youtubeArtistId": "UCG9QDGb1s-H4WI5ih9LJ6RQ"
+  },
+  {
+  
+    "name": "Sarah Toscano",
+    "youtubeArtistId": "UCsmdO9Ilv7aN656HP5A2xkQ"
+  },
+  {
+  
+    "name": "Lovegang126",
+    "youtubeArtistId": "UCZs9gUH6erngDxL8lX9ugMg"
+  },
+  {
+  
+    "name": "Petit",
+    "youtubeArtistId": "UC_nIccKw5czDDpltWAFm0-Q"
+  },
+  {
+  
+    "name": "FUCKYOURCLIQUE",
+    "youtubeArtistId": "UCPSfDTDUeWSjokYL6ArwWSg"
   }
 ]
