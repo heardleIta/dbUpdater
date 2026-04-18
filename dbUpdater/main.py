@@ -184,6 +184,43 @@ def ensure_italian_exit(max_rotations: int = 20) -> str:
     raise RuntimeError(f"Impossibile ottenere un exit IT confermato dopo {max_rotations} rotazioni")
 
 
+# Stato per il check periodico dell'exit (vedi maintain_italian_exit).
+# I circuiti Tor possono essere ruotati spontaneamente (MaxCircuitDirtiness
+# di default 10 min) e portarci su un exit non-IT a metà run: ri-verifichiamo
+# regolarmente per intercettare il cambio prima che YouTube restituisca errori.
+_LAST_EXIT_CHECK = 0.0
+_EXIT_CHECK_INTERVAL_S = 300
+
+
+def maintain_italian_exit() -> None:
+    """
+    Re-verifica periodica dell'exit Tor. Saltata se l'ultima verifica è entro
+    _EXIT_CHECK_INTERVAL_S. Se il consenso GeoIP non è più IT, rientra in
+    ensure_italian_exit per ruotare fino a ritrovare un exit italiano.
+    """
+    global _LAST_EXIT_CHECK
+    now = time.monotonic()
+    if (now - _LAST_EXIT_CHECK) < _EXIT_CHECK_INTERVAL_S:
+        return
+    try:
+        ip, cc_primary, cc_secondaries = _get_exit_geo()
+    except Exception as e:
+        log.warning("Re-check exit fallito: %s — forzo nuova procedura", e)
+        ensure_italian_exit()
+        _LAST_EXIT_CHECK = time.monotonic()
+        return
+
+    dissent = [c for c in cc_secondaries if c != "IT"]
+    if cc_primary == "IT" and not dissent:
+        log.info("Re-check exit: IP=%s ancora IT (secondari=%s)",
+                 ip, ",".join(cc_secondaries) if cc_secondaries else "n/a")
+    else:
+        log.warning("Re-check exit: IP=%s non più IT (primary=%s, secondari=%s) — rotazione",
+                    ip, cc_primary, ",".join(cc_secondaries) if cc_secondaries else "n/a")
+        ensure_italian_exit()
+    _LAST_EXIT_CHECK = time.monotonic()
+
+
 def build_ytmusic() -> YTMusic:
     """YTMusic con Session retry + proxies SOCKS5h. location='IT' per mercato italiano."""
     return YTMusic(location="IT", requests_session=_build_session(), proxies=_PROXIES)
@@ -308,6 +345,11 @@ def getThumbnail(thumbnails):
     return url
 
 
+# Contatore cumulativo delle tracce scartate da isSongPlayable, aggregato per
+# motivo (status YouTube o "NOT_EMBEDDABLE"). Usato per il riepilogo finale.
+_UNPLAYABLE_STATS: dict[str, int] = {}
+
+
 def isSongPlayable(videoId: str) -> bool:
     """
     Verifica la riproducibilità di una traccia tramite get_song.
@@ -318,9 +360,11 @@ def isSongPlayable(videoId: str) -> bool:
         status = playability.get("status")
         if status == "UNPLAYABLE":
             log.warning("  Canzone %s non riproducibile (status=%s), saltata", videoId, status)
+            _UNPLAYABLE_STATS[status] = _UNPLAYABLE_STATS.get(status, 0) + 1
             return False
         if playability.get("playableInEmbed") is False:
             log.warning("  Canzone %s non incorporabile (playableInEmbed=False), saltata", videoId)
+            _UNPLAYABLE_STATS["NOT_EMBEDDABLE"] = _UNPLAYABLE_STATS.get("NOT_EMBEDDABLE", 0) + 1
             return False
     except Exception as e:
         log.debug("get_song fallito per %s: %s", videoId, e)
@@ -390,6 +434,7 @@ if __name__ == "__main__":
     #    non solo secondo il consensus Tor (ruotiamo finché coincidono)
     wait_for_tor()
     ensure_italian_exit()
+    _LAST_EXIT_CHECK = time.monotonic()
     yt = build_ytmusic()
 
     # Carica gli artisti dal DB e unisce quelli nuovi definiti localmente in newArtists.json
@@ -402,6 +447,7 @@ if __name__ == "__main__":
     log.info("Avvio elaborazione: %d artisti totali (%d nuovi)", len(allArtists), len(newArtists))
 
     for index, artist in enumerate(allArtists):
+        maintain_italian_exit()
         allSongs = []
         log.info("[%d/%d] Artista: %s", index + 1, len(allArtists), artist["name"])
         try:
@@ -449,5 +495,12 @@ if __name__ == "__main__":
             log.error("Errore per l'artista %s (id: %s): %s", artist["name"], artist["youtubeArtistId"], e)
 
     log.info("Elaborazione completata. Avvio invio al backend...")
+
+    total_unplayable = sum(_UNPLAYABLE_STATS.values())
+    if total_unplayable:
+        breakdown = ", ".join(f"{k}={v}" for k, v in sorted(_UNPLAYABLE_STATS.items()))
+        log.info("Riepilogo canzoni non playable: %d totali (%s)", total_unplayable, breakdown)
+    else:
+        log.info("Riepilogo canzoni non playable: 0")
 
     sender()
