@@ -92,33 +92,51 @@ def renew_circuit() -> None:
     time.sleep(10)
 
 
-def _get_exit_country() -> tuple[str, str]:
+# Provider GeoIP ordinati per allineamento con MaxMind (il DB che usa YouTube).
+# ipinfo.io è partner MaxMind → il suo verdetto è quello più vicino a YouTube,
+# quindi lo usiamo come "primario"; gli altri servono per cross-check di sanità.
+_GEOIP_PROVIDERS = [
+    ("https://ipinfo.io/json", "ip", "country"),
+    ("https://ifconfig.co/json", "ip", "country_iso"),
+    ("http://ip-api.com/json/?fields=status,countryCode,query", "query", "countryCode"),
+]
+
+
+def _lookup_ip_country(url: str, ip_key: str, cc_key: str) -> tuple[str, str] | None:
+    """Singola query GeoIP. Ritorna (ip, country_upper) o None in caso di errore."""
+    try:
+        r = requests.get(url, proxies=_PROXIES, timeout=20,
+                         headers={"User-Agent": "curl/8.0"})
+        if r.status_code != 200 or not r.text.strip():
+            return None
+        data = r.json()
+        ip = data.get(ip_key, "") or ""
+        cc = (data.get(cc_key) or "").upper()
+        if ip and cc:
+            return ip, cc
+    except Exception:
+        pass
+    return None
+
+
+def _get_exit_geo() -> tuple[str, str, list[str]]:
     """
-    Ritorna (ip, country_code) come visto dal GeoIP commerciale (quello che usa YouTube).
-    Prova più provider perché alcuni (es. ipapi.co) rate-limitano le richieste via Tor.
+    Ritorna (ip, country_primario, countries_secondari).
+    Il primario è ipinfo.io (MaxMind-aligned, vicino al verdetto di YouTube);
+    i secondari servono per contestare eventualmente un falso IT. Raise
+    RuntimeError se il primario non risponde: senza il suo verdetto non possiamo
+    decidere in modo affidabile.
     """
-    providers = [
-        ("http://ip-api.com/json/?fields=status,countryCode,query", "query", "countryCode"),
-        ("https://ifconfig.co/json", "ip", "country_iso"),
-        ("https://ipapi.co/json/", "ip", "country_code"),
-    ]
-    last_err = None
-    for url, ip_key, cc_key in providers:
-        try:
-            r = requests.get(url, proxies=_PROXIES, timeout=20,
-                             headers={"User-Agent": "curl/8.0"})
-            if r.status_code != 200 or not r.text.strip():
-                last_err = f"{url} → HTTP {r.status_code}"
-                continue
-            data = r.json()
-            ip = data.get(ip_key, "") or ""
-            cc = (data.get(cc_key) or "").upper()
-            if ip and cc:
-                return ip, cc
-            last_err = f"{url} → payload incompleto {data}"
-        except Exception as e:
-            last_err = f"{url} → {e!r}"
-    raise RuntimeError(f"Tutti i provider GeoIP hanno fallito: {last_err}")
+    primary = _lookup_ip_country(*_GEOIP_PROVIDERS[0])
+    if primary is None:
+        raise RuntimeError("Provider GeoIP primario (ipinfo.io) non raggiungibile")
+    ip, cc_primary = primary
+    secondaries: list[str] = []
+    for url, ip_key, cc_key in _GEOIP_PROVIDERS[1:]:
+        r = _lookup_ip_country(url, ip_key, cc_key)
+        if r:
+            secondaries.append(r[1])
+    return ip, cc_primary, secondaries
 
 
 def _exclude_exit_ips(ips: set[str]) -> None:
@@ -135,27 +153,35 @@ def ensure_italian_exit(max_rotations: int = 20) -> str:
     """
     Il GeoIP interno di Tor (ExitNodes {it}) non coincide sempre con il GeoIP
     commerciale usato da YouTube: un nodo può essere classificato IT nel consensus
-    Tor ma DE/FR/etc. secondo MaxMind/ip-api. Qui ruotiamo il circuito finché
-    l'exit risulta davvero IT anche al GeoIP commerciale, escludendo via control
-    port gli IP visti non-IT così che NEWNYM non li ri-scelga.
+    Tor ma DE/FR/etc. secondo MaxMind. Inoltre anche tra provider commerciali
+    ci sono divergenze (es. ip-api.com dice IT mentre MaxMind/ipinfo dice DE),
+    e l'IP falsamente IT scatena LOGIN_REQUIRED a catena su YouTube. Accettiamo
+    l'exit solo se il provider primario (ipinfo.io, MaxMind-aligned) lo classifica
+    IT E nessun provider secondario contesta il verdetto.
     """
     blacklist: set[str] = set()
     for attempt in range(1, max_rotations + 1):
         try:
-            ip, country = _get_exit_country()
-            log.info("Tentativo %d/%d: exit IP=%s country=%s", attempt, max_rotations, ip, country)
+            ip, cc_primary, cc_secondaries = _get_exit_geo()
+            log.info("Tentativo %d/%d: exit IP=%s country=%s (secondari=%s)",
+                     attempt, max_rotations, ip, cc_primary,
+                     ",".join(cc_secondaries) if cc_secondaries else "n/a")
         except Exception as e:
             log.warning("Lookup GeoIP fallito (tentativo %d): %s — ruoto circuito", attempt, e)
             renew_circuit()
             continue
-        if country == "IT":
+
+        dissent = [c for c in cc_secondaries if c != "IT"]
+        if cc_primary == "IT" and not dissent:
             return ip
+
         if ip:
             blacklist.add(ip)
             _exclude_exit_ips(blacklist)
-        log.warning("Exit non IT (country=%s). Blacklist=%d, rotazione...", country, len(blacklist))
+        reason = f"primary={cc_primary}" if cc_primary != "IT" else f"secondari non-IT={dissent}"
+        log.warning("Exit non IT confermato (%s). Blacklist=%d, rotazione...", reason, len(blacklist))
         renew_circuit()
-    raise RuntimeError(f"Impossibile ottenere un exit IT dopo {max_rotations} rotazioni")
+    raise RuntimeError(f"Impossibile ottenere un exit IT confermato dopo {max_rotations} rotazioni")
 
 
 def build_ytmusic() -> YTMusic:
