@@ -191,6 +191,26 @@ def ensure_italian_exit(max_rotations: int = 20) -> str:
 _LAST_EXIT_CHECK = 0.0
 _EXIT_CHECK_INTERVAL_S = 300
 
+# Rotazione forzata dopo N album processati: con troppe chiamate dallo stesso
+# exit YouTube inizia a flaggare l'IP e restituisce UNPLAYABLE a raffica anche
+# su contenuti validi. Ruotare proattivamente "resetta" la reputazione dell'IP.
+_ALBUMS_SINCE_ROTATION = 0
+_ROTATE_EVERY_ALBUMS = 30
+
+
+def force_rotate_italian_exit() -> None:
+    """
+    Forza la rotazione del circuito Tor anche se l'exit corrente è già IT, poi
+    ri-verifica il consenso GeoIP sul nuovo exit. Da chiamare periodicamente
+    (ogni _ROTATE_EVERY_ALBUMS album) per evitare il rate-limit di YouTube.
+    """
+    global _LAST_EXIT_CHECK, _ALBUMS_SINCE_ROTATION
+    log.info("Rotazione Tor forzata dopo %d album", _ALBUMS_SINCE_ROTATION)
+    renew_circuit()
+    ensure_italian_exit()
+    _LAST_EXIT_CHECK = time.monotonic()
+    _ALBUMS_SINCE_ROTATION = 0
+
 
 def maintain_italian_exit() -> None:
     """
@@ -353,15 +373,10 @@ _UNPLAYABLE_STATS: dict[str, int] = {}
 def isSongPlayable(videoId: str) -> bool:
     """
     Verifica la riproducibilità di una traccia tramite get_song.
-    Salta le tracce con status UNPLAYABLE o playableInEmbed=False.
+    Salta le tracce con playableInEmbed=False.
     """
     try:
         playability = _retry_ytmusic(yt.get_song, videoId).get("playabilityStatus", {})
-        status = playability.get("status")
-        if status == "UNPLAYABLE":
-            log.warning("  Canzone %s non riproducibile (status=%s), saltata", videoId, status)
-            _UNPLAYABLE_STATS[status] = _UNPLAYABLE_STATS.get(status, 0) + 1
-            return False
         if playability.get("playableInEmbed") is False:
             log.warning("  Canzone %s non incorporabile (playableInEmbed=False), saltata", videoId)
             _UNPLAYABLE_STATS["NOT_EMBEDDABLE"] = _UNPLAYABLE_STATS.get("NOT_EMBEDDABLE", 0) + 1
@@ -472,12 +487,15 @@ if __name__ == "__main__":
             )
             if filteredYTAlbums:
                 for albumYTFiltered in filteredYTAlbums:
+                    if _ALBUMS_SINCE_ROTATION >= _ROTATE_EVERY_ALBUMS:
+                        force_rotate_italian_exit()
                     songs = getSongsOfAlbum(
                         albumYTFiltered["browseId"],
                         artistName=artist["name"],
                         artistaChannelId=artist["youtubeArtistId"],
                         idAlbum=albumYTFiltered["playlistId"],
                     )
+                    _ALBUMS_SINCE_ROTATION += 1
                     log.info(
                         "  Album '%s' (%s): %d canzoni trovate",
                         albumYTFiltered.get("title", "?"), albumYTFiltered["playlistId"], len(songs),
