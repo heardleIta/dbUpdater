@@ -1,9 +1,10 @@
 import logging
 import time
-
 import requests
 from ytmusicapi import YTMusic
 
+# Configurazione minima del logger
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 log = logging.getLogger(__name__)
 
 ENDPOINT = "https://be.heardleitalia.com/api"
@@ -11,12 +12,10 @@ CHECKPOINT_FILE = "checkpoint_lyrics_sent.txt"
 
 yt = YTMusic()
 
-
 def _get_token():
     r = requests.get(f"{ENDPOINT}/refresh", timeout=15)
     r.raise_for_status()
     return r.json()["data"]
-
 
 def _get_songs_of_artist(youtube_artist_id):
     r = requests.post(
@@ -32,16 +31,16 @@ def _get_songs_of_artist(youtube_artist_id):
     r.raise_for_status()
     return r.json()["data"]["songs"]
 
-
 def _fetch_lyrics(youtube_song_id):
-    """Returns lyrics string or None."""
-    playlist = yt.get_watch_playlist(videoId=youtube_song_id, limit=1)
-    browse_id = playlist.get("lyrics") if playlist else None
-    if not browse_id:
+    try:
+        playlist = yt.get_watch_playlist(videoId=youtube_song_id, limit=1)
+        browse_id = playlist.get("lyrics") if playlist else None
+        if not browse_id:
+            return None
+        result = yt.get_lyrics(browseId=browse_id)
+        return result.get("lyrics") if result else None
+    except Exception:
         return None
-    result = yt.get_lyrics(browseId=browse_id)
-    return result.get("lyrics") if result else None
-
 
 def _insert_lyrics(youtube_song_id, title, lyrics, key):
     return requests.post(
@@ -59,7 +58,6 @@ def _insert_lyrics(youtube_song_id, title, lyrics, key):
         timeout=15,
     )
 
-
 def run(youtube_artist_id):
     try:
         with open(CHECKPOINT_FILE, "r", encoding="utf-8") as f:
@@ -68,13 +66,17 @@ def run(youtube_artist_id):
         processed = set()
 
     try:
-        songs = _get_songs_of_artist(youtube_artist_id)
+        all_songs = _get_songs_of_artist(youtube_artist_id)
+        songs = [s for s in all_songs if s["songYoutubeId"] not in processed]
     except Exception as e:
-        log.error("Lyrics: impossibile ottenere canzoni per %s: %s", youtube_artist_id, e)
+        print(f"Errore critico artist_id {youtube_artist_id}: {e}")
         return
 
-    songs = [s for s in songs if s["songYoutubeId"] not in processed]
-    log.info("Lyrics: %d canzoni da processare per %s", len(songs), youtube_artist_id)
+    if not songs:
+        print(f"Nessuna nuova canzone da processare per {youtube_artist_id}.")
+        return
+
+    print(f"Inizio processing: {len(songs)} canzoni.")
 
     ok = no_lyrics = errors = 0
     start = time.time()
@@ -83,6 +85,7 @@ def run(youtube_artist_id):
         for i, song in enumerate(songs, 1):
             youtube_id = song["songYoutubeId"]
             title = song["songTitle"]
+            
             try:
                 lyrics = _fetch_lyrics(youtube_id)
                 if lyrics:
@@ -93,22 +96,20 @@ def run(youtube_artist_id):
                         checkpoint.flush()
                         ok += 1
                     else:
-                        log.error("Lyrics HTTP %d per %s: %s", resp.status_code, youtube_id, resp.text[:200])
                         errors += 1
                 else:
                     no_lyrics += 1
-            except Exception as e:
-                log.error("Lyrics eccezione per %s: %s", youtube_id, e)
+            except Exception:
                 errors += 1
 
+            # Calcolo tempo rimanente
             elapsed = time.time() - start
-            done = ok + no_lyrics + errors
-            remaining = ((elapsed / done) * (len(songs) - done)) / 60 if done else 0
-            print(
-                f"\r  Lyrics [{i}/{len(songs)}] OK:{ok} | Senza:{no_lyrics} | Err:{errors} | ~{remaining:.1f}min",
-                end="", flush=True,
-            )
+            done = i
+            avg_time = elapsed / done
+            remaining = (avg_time * (len(songs) - done)) / 60
+            
+            # Print minimale su singola riga
+            status = f"\rProgress: {done}/{len(songs)} | OK:{ok} | NoLyrics:{no_lyrics} | Err:{errors} | Fine stimata: {remaining:.1f}m"
+            print(status, end="", flush=True)
 
-    if songs:
-        print()
-    log.info("Lyrics completato: %d inseriti, %d senza testo, %d errori", ok, no_lyrics, errors)
+    print(f"\nCompletato! Inseriti: {ok}, Senza testo: {no_lyrics}, Errori: {errors}")
