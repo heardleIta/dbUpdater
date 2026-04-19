@@ -12,6 +12,7 @@ from urllib3.util.retry import Retry
 from ytmusicapi import YTMusic
 
 from . import ARTISTI_REVISIONATI
+from .insert_lyrics import run as insert_lyrics_for_artist
 from .send import sender
 
 logging.basicConfig(
@@ -511,6 +512,9 @@ if __name__ == "__main__":
 
         except Exception as e:
             log.error("Errore per l'artista %s (id: %s): %s", artist["name"], artist["youtubeArtistId"], e)
+
+        log.info("Avvio scraping testi per %s...", artist["name"])
+        insert_lyrics_for_artist(artist["youtubeArtistId"])
 
     log.info("Elaborazione completata. Avvio invio al backend...")
 
