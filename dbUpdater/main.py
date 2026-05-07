@@ -514,7 +514,7 @@ if __name__ == "__main__":
             log.error("Errore per l'artista %s (id: %s): %s", artist["name"], artist["youtubeArtistId"], e)
 
         log.info("Avvio scraping testi per %s...", artist["name"])
-        insert_lyrics_for_artist(artist["youtubeArtistId"])
+        #insert_lyrics_for_artist(artist["youtubeArtistId"])
 
     log.info("Elaborazione completata. Avvio invio al backend...")
 
