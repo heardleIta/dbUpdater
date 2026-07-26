@@ -1,0 +1,93 @@
+# Compose per il deploy su Coolify.
+#
+# Differisce da docker-compose.yml (che resta quello per lo sviluppo locale) in
+# tre punti che su Coolify fanno la differenza tra funzionare e perdere dati:
+#
+#   1. VOLUMI NOMINATI invece di bind mount relativi. Su Coolify i percorsi
+#      relativi cadono nella directory di build, che è effimera: a ogni redeploy
+#      si perderebbero coda artisti, storico dei run, resoconto degli invii e
+#      checkpoint dei testi — e perdere il checkpoint significa ri-scaricare da
+#      capo tutti i testi già fatti.
+#   2. PORTA NON PUBBLICATA sull'host: ci arriva il reverse proxy di Coolify,
+#      che si occupa anche del certificato. Il dominio si configura dalla sua
+#      interfaccia puntando alla porta 8090 di updater-api.
+#   3. NESSUN SERVIZIO one-shot. Il `dbupdater` manuale del compose locale sta
+#      sotto un profilo, ma Coolify i profili li ignora: qui non c'è, così non
+#      può partire uno scraping non richiesto.
+#
+# Le variabili d'ambiente si impostano nell'interfaccia di Coolify, non in un
+# file .env. I `$` nella password vanno raddoppiati SOLO se Coolify genera un
+# file .env di progetto: se invece le mette nell'ambiente del processo arrivano
+# intere. Verificare al primo deploy con
+#   docker exec <container> sh -c 'echo "[$HEARDLE_ADMIN_PASSWORD]"'
+# e controllando che la password non risulti troncata al primo $.
+
+services:
+  tor-proxy:
+    image: dperson/torproxy:latest
+    restart: unless-stopped
+    environment:
+      - LOCATION=IT
+      - TZ=Europe/Rome
+      - PASSWORD=${TOR_CONTROL_PASSWORD}
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf --max-time 10 --socks5-hostname 127.0.0.1:9050 https://check.torproject.org/api/ip | grep -q '\"IsTor\":true'"]
+      interval: 30s
+      timeout: 15s
+      start_period: 120s
+      retries: 3
+
+  updater-api:
+    build: .
+    restart: unless-stopped
+    command: ["uvicorn", "dbUpdater.api.app:app", "--host", "0.0.0.0", "--port", "8090"]
+    environment:
+      - UPDATER_DATA_DIR=/data
+      # Backend di destinazione: questo valore decide dove finiscono le canzoni.
+      - HEARDLE_API_URL=${HEARDLE_API_URL}
+      # Credenziali con cui l'updater si autentica per gli endpoint /insert/*.
+      - HEARDLE_ADMIN_USERNAME=${HEARDLE_ADMIN_USERNAME}
+      - HEARDLE_ADMIN_PASSWORD=${HEARDLE_ADMIN_PASSWORD}
+      # Stesso segreto del backend: serve a validare i token del back office.
+      - JWT_SECRET=${JWT_SECRET}
+      # Origin del sito, altrimenti il browser blocca le chiamate dal pannello.
+      - UPDATER_CORS_ORIGINS=${UPDATER_CORS_ORIGINS}
+      - YTMUSIC_HEADERS=${YTMUSIC_HEADERS}
+      - TOR_PROXY_URL=socks5h://tor-proxy:9050
+      - TOR_CONTROL_HOST=tor-proxy
+      - TOR_CONTROL_PORT=9051
+      - TOR_CONTROL_PASSWORD=${TOR_CONTROL_PASSWORD}
+    expose:
+      - "8090"
+    depends_on:
+      tor-proxy:
+        condition: service_healthy
+    networks: [internal]
+    volumes:
+      # Stato che deve sopravvivere ai redeploy: database della coda e dello
+      # storico, log ed eventi dei run, checkpoint dei testi.
+      - updater-data:/data
+      # Risultati dello scraping in attesa di approvazione: un redeploy a metà
+      # revisione non deve buttarli via.
+      - updater-review:/app/ArtistiRevisionati
+    healthcheck:
+      # L'immagine è python:3.11-slim e non contiene curl né wget: si usa
+      # l'interprete, che c'è per definizione.
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8090/health', timeout=5).status == 200 else 1)\"",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
+
+volumes:
+  updater-data:
+  updater-review:
+
+networks:
+  internal:
+    driver: bridge
