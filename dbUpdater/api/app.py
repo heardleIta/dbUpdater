@@ -46,11 +46,20 @@ async def lifespan(_: FastAPI):
     yield
 
 
+# La documentazione interattiva di FastAPI è comoda in sviluppo ma di default
+# è pubblica: su un servizio esposto regalerebbe a chiunque la mappa completa
+# degli endpoint, compresi quelli che scrivono nel database e avviano gli
+# scraping. Si accende solo dove serve, con UPDATER_DOCS=true.
+_docs_enabled = os.environ.get("UPDATER_DOCS", "").lower() in ("1", "true", "yes")
+
 app = FastAPI(
     title="Heardle dbUpdater — API di controllo",
     description="Coda artisti, esecuzione dei run di scraping e approvazione dei risultati.",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url="/docs" if _docs_enabled else None,
+    redoc_url="/redoc" if _docs_enabled else None,
+    openapi_url="/openapi.json" if _docs_enabled else None,
 )
 
 _origins = os.environ.get("UPDATER_CORS_ORIGINS", "*")
