@@ -1,9 +1,11 @@
 
+import argparse
 import json
 import logging
 import os
 import re
 import socket
+import sys
 import time
 
 import requests
@@ -12,8 +14,13 @@ from urllib3.util.retry import Retry
 from ytmusicapi import YTMusic
 
 from . import ARTISTI_REVISIONATI
+from . import events
+from . import insert_lyrics
 from .insert_lyrics import run as insert_lyrics_for_artist
 from .send import sender
+from . import api_endpoint
+
+ENDPOINT = api_endpoint()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,10 +56,20 @@ def _build_session() -> requests.Session:
 
 
 def wait_for_tor(timeout_s: int = 180) -> str:
-    """Attende che Tor abbia un circuito IT funzionante. RuntimeError se fallisce."""
+    """
+    Attende che Tor abbia un circuito IT funzionante. RuntimeError se fallisce.
+
+    Ogni tentativo viene registrato: l'attesa può durare minuti e senza traccia
+    il pannello di controllo resterebbe muto, indistinguibile da un run bloccato.
+    """
+    log.info("Attesa del proxy Tor su %s (fino a %ds)...", TOR_PROXY_URL, timeout_s)
+    events.emit("tor_wait", proxy=TOR_PROXY_URL, timeout_s=timeout_s)
+
     deadline = time.monotonic() + timeout_s
     delay, last_err = 2.0, None
+    attempt = 0
     while time.monotonic() < deadline:
+        attempt += 1
         try:
             r = requests.get(
                 "https://check.torproject.org/api/ip",
@@ -61,13 +78,23 @@ def wait_for_tor(timeout_s: int = 180) -> str:
             data = r.json()
             if data.get("IsTor") is True and data.get("IP"):
                 log.info("Tor pronto. Exit IP=%s (ExitNodes={it}, StrictNodes=1)", data["IP"])
+                events.emit("tor_ready", ip=data["IP"])
                 return data["IP"]
             last_err = f"not-tor: {data}"
         except Exception as e:
             last_err = repr(e)
+        log.warning(
+            "Tor non ancora pronto (tentativo %d): %s — riprovo tra %.0fs",
+            attempt, last_err, delay,
+        )
+        events.emit("tor_retry", attempt=attempt, error=str(last_err)[:200])
         time.sleep(delay)
         delay = min(delay * 1.7, 20.0)
-    raise RuntimeError(f"Tor proxy non raggiungibile dopo {timeout_s}s: {last_err}")
+
+    msg = f"Tor proxy non raggiungibile dopo {timeout_s}s: {last_err}"
+    log.error(msg)
+    events.emit("tor_failed", error=str(last_err)[:200])
+    raise RuntimeError(msg)
 
 
 def _tor_control(command: str) -> str:
@@ -120,24 +147,60 @@ def _lookup_ip_country(url: str, ip_key: str, cc_key: str) -> tuple[str, str] | 
     return None
 
 
-def _get_exit_geo() -> tuple[str, str, list[str]]:
+def _get_exit_geo() -> tuple[str, str | None, list[str]]:
     """
-    Ritorna (ip, country_primario, countries_secondari).
-    Il primario è ipinfo.io (MaxMind-aligned, vicino al verdetto di YouTube);
-    i secondari servono per contestare eventualmente un falso IT. Raise
-    RuntimeError se il primario non risponde: senza il suo verdetto non possiamo
-    decidere in modo affidabile.
+    Ritorna (ip, country_primario_o_None, countries_secondari).
+
+    Il primario è ipinfo.io (MaxMind-aligned, vicino al verdetto di YouTube); i
+    secondari servono per contestare eventualmente un falso IT. Il primario può
+    non dare verdetto (`None`): da quando ipinfo.io rifiuta il traffico Tor con
+    403 è di fatto la norma, e pretenderlo bloccava ogni run. La decisione su
+    cosa fare senza di lui sta in `_exit_verdict`.
+
+    Raise RuntimeError solo se *nessun* provider risponde: lì davvero non
+    sappiamo dove siamo usciti.
     """
     primary = _lookup_ip_country(*_GEOIP_PROVIDERS[0])
-    if primary is None:
-        raise RuntimeError("Provider GeoIP primario (ipinfo.io) non raggiungibile")
-    ip, cc_primary = primary
+    ip = primary[0] if primary else ""
+    cc_primary = primary[1] if primary else None
+
     secondaries: list[str] = []
     for url, ip_key, cc_key in _GEOIP_PROVIDERS[1:]:
         r = _lookup_ip_country(url, ip_key, cc_key)
         if r:
             secondaries.append(r[1])
+            ip = ip or r[0]
+
+    if cc_primary is None and not secondaries:
+        raise RuntimeError("Nessun provider GeoIP raggiungibile")
     return ip, cc_primary, secondaries
+
+
+def _exit_verdict(cc_primary: str | None, cc_secondaries: list[str]) -> tuple[bool, str]:
+    """
+    Decide se l'exit corrente è accettabile, restituendo (ok, motivo).
+
+    Regola invariata: si accetta solo col verdetto IT del primario (ipinfo.io,
+    allineato a MaxMind, che è il GeoIP guardato da YouTube) e nessun secondario
+    che lo contesti. Un falso IT scatena LOGIN_REQUIRED a catena, quindi non si
+    concede il beneficio del dubbio.
+
+    Se il primario non risponde — capita: rifiuta il traffico da certi exit con
+    403 — l'exit viene *rifiutato*, non accettato per ripiego. La differenza
+    rispetto a prima è che il rifiuto porta a mettere l'IP in blacklist e a
+    ruotare davvero: prima il lookup fallito veniva trattato come errore e
+    l'IP restava selezionabile, così NEWNYM poteva riproporre in eterno lo
+    stesso exit bloccato ed esaurire tutte le rotazioni su di lui.
+    """
+    dissent = [c for c in cc_secondaries if c != "IT"]
+
+    if cc_primary is None:
+        return False, "primario senza verdetto (403 o non raggiungibile)"
+    if cc_primary != "IT":
+        return False, f"primario={cc_primary}"
+    if dissent:
+        return False, f"secondari non-IT={dissent}"
+    return True, "primario IT, nessuna contestazione"
 
 
 def _exclude_exit_ips(ips: set[str]) -> None:
@@ -156,31 +219,32 @@ def ensure_italian_exit(max_rotations: int = 20) -> str:
     commerciale usato da YouTube: un nodo può essere classificato IT nel consensus
     Tor ma DE/FR/etc. secondo MaxMind. Inoltre anche tra provider commerciali
     ci sono divergenze (es. ip-api.com dice IT mentre MaxMind/ipinfo dice DE),
-    e l'IP falsamente IT scatena LOGIN_REQUIRED a catena su YouTube. Accettiamo
-    l'exit solo se il provider primario (ipinfo.io, MaxMind-aligned) lo classifica
-    IT E nessun provider secondario contesta il verdetto.
+    e l'IP falsamente IT scatena LOGIN_REQUIRED a catena su YouTube. La regola
+    di accettazione è in `_exit_verdict`.
     """
     blacklist: set[str] = set()
     for attempt in range(1, max_rotations + 1):
         try:
             ip, cc_primary, cc_secondaries = _get_exit_geo()
             log.info("Tentativo %d/%d: exit IP=%s country=%s (secondari=%s)",
-                     attempt, max_rotations, ip, cc_primary,
+                     attempt, max_rotations, ip, cc_primary or "n/d",
                      ",".join(cc_secondaries) if cc_secondaries else "n/a")
         except Exception as e:
             log.warning("Lookup GeoIP fallito (tentativo %d): %s — ruoto circuito", attempt, e)
             renew_circuit()
             continue
 
-        dissent = [c for c in cc_secondaries if c != "IT"]
-        if cc_primary == "IT" and not dissent:
+        ok, reason = _exit_verdict(cc_primary, cc_secondaries)
+        if ok:
+            log.info("Exit accettato: %s (%s)", ip, reason)
+            events.emit("exit_accepted", ip=ip, reason=reason)
             return ip
 
         if ip:
             blacklist.add(ip)
             _exclude_exit_ips(blacklist)
-        reason = f"primary={cc_primary}" if cc_primary != "IT" else f"secondari non-IT={dissent}"
         log.warning("Exit non IT confermato (%s). Blacklist=%d, rotazione...", reason, len(blacklist))
+        events.emit("exit_rejected", attempt=attempt, total=max_rotations, ip=ip, reason=reason)
         renew_circuit()
     raise RuntimeError(f"Impossibile ottenere un exit IT confermato dopo {max_rotations} rotazioni")
 
@@ -231,13 +295,11 @@ def maintain_italian_exit() -> None:
         _LAST_EXIT_CHECK = time.monotonic()
         return
 
-    dissent = [c for c in cc_secondaries if c != "IT"]
-    if cc_primary == "IT" and not dissent:
-        log.info("Re-check exit: IP=%s ancora IT (secondari=%s)",
-                 ip, ",".join(cc_secondaries) if cc_secondaries else "n/a")
+    ok, reason = _exit_verdict(cc_primary, cc_secondaries)
+    if ok:
+        log.info("Re-check exit: IP=%s ancora accettabile (%s)", ip, reason)
     else:
-        log.warning("Re-check exit: IP=%s non più IT (primary=%s, secondari=%s) — rotazione",
-                    ip, cc_primary, ",".join(cc_secondaries) if cc_secondaries else "n/a")
+        log.warning("Re-check exit: IP=%s non più accettabile (%s) — rotazione", ip, reason)
         ensure_italian_exit()
     _LAST_EXIT_CHECK = time.monotonic()
 
@@ -273,7 +335,7 @@ yt: YTMusic
 
 def getAllArtists():
     """Recupera tutti gli artisti presenti nel database dell'applicazione."""
-    response = requests.get("https://be.heardleitalia.com/api/heardle/artist/all")
+    response = requests.get(f"{ENDPOINT}/heardle/artist/all")
     response = response.json()
     if response.get("data") is None:
         log.error("Errore nella richiesta degli artisti: %s", response.get("errorMessage", response))
@@ -283,7 +345,7 @@ def getAllArtists():
 
 def getAllAlbumOfArtistInDB(artistId):
     """Recupera dal DB tutti gli album già salvati per un dato artista (per ID YouTube)."""
-    response = requests.get(f"https://be.heardleitalia.com/api/heardle/album?youtubeArtistId={artistId}")
+    response = requests.get(f"{ENDPOINT}/heardle/album?youtubeArtistId={artistId}")
     data = response.json()
     if data.get("data") is None:
         if data.get("errorMessage") != "Artist not found":
@@ -444,79 +506,195 @@ def writeJSON(obj, filename):
         log.error("Errore scrittura su %s: %s", filename, e)
 
 
-if __name__ == "__main__":
+def _parse_args(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="dbUpdater",
+        description="Scraping YouTube Music degli artisti Heardle e invio al backend.",
+    )
+    parser.add_argument(
+        "--only-queued", action="store_true",
+        help="Elabora solo gli artisti nuovi in coda, senza ripassare quelli già nel DB.",
+    )
+    parser.add_argument(
+        "--artist", action="append", metavar="YT_ID", default=None,
+        help="Elabora solo l'artista con questo id YouTube (ripetibile).",
+    )
+    parser.add_argument(
+        "--skip-lyrics", action="store_true",
+        help="Salta lo scraping dei testi.",
+    )
+    parser.add_argument(
+        "--lyrics-only", action="store_true",
+        help="Solo testi: nessuno scraping di album e canzoni.",
+    )
+    parser.add_argument(
+        "--no-send", action="store_true",
+        help="Non inviare al backend a fine run: i JSON restano in ArtistiRevisionati "
+             "in attesa di approvazione dal back office.",
+    )
+    parser.add_argument(
+        "--queue-file", default=None, metavar="PATH",
+        help="File JSON con gli artisti nuovi (default: newArtists.json del progetto).",
+    )
+    return parser.parse_args(argv)
+
+
+def _load_artists(args):
+    """
+    Costruisce la lista di artisti da elaborare secondo le opzioni scelte.
+    Gli artisti in coda precedono sempre quelli già presenti nel DB.
+    """
+    queue_path = args.queue_file or os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "newArtists.json"
+    )
+    try:
+        with open(queue_path, "r", encoding="utf-8") as f:
+            newArtists = json.load(f)
+    except FileNotFoundError:
+        log.warning("Coda artisti non trovata in %s: nessun artista nuovo.", queue_path)
+        newArtists = []
+
+    if args.only_queued:
+        dbArtists = []
+    else:
+        dbArtists = getAllArtists()
+
+    newArtistIds = {a["youtubeArtistId"] for a in newArtists}
+    allArtists = newArtists + [a for a in dbArtists if a["youtubeArtistId"] not in newArtistIds]
+
+    if args.artist:
+        wanted = set(args.artist)
+        allArtists = [a for a in allArtists if a["youtubeArtistId"] in wanted]
+        known = {a["youtubeArtistId"] for a in allArtists}
+        missing = wanted - known
+        if missing:
+            # Un id passato a mano può non essere in coda: lo elaboriamo comunque,
+            # ma il nome va cercato nel database, altrimenti log e pannello
+            # mostrerebbero il channel id al posto dell'artista.
+            names = {}
+            try:
+                names = {a["youtubeArtistId"]: a["name"] for a in getAllArtists()}
+            except Exception as e:
+                log.warning("Nomi artisti non recuperabili dal backend: %s", e)
+            allArtists += [
+                {"name": names.get(i, i), "youtubeArtistId": i} for i in missing
+            ]
+
+    return allArtists, len(newArtists)
+
+
+def main(argv=None):
+    global yt, _LAST_EXIT_CHECK, _ALBUMS_SINCE_ROTATION
+
+    args = _parse_args(argv)
+
     # 1) Tor deve essere raggiungibile con un circuito qualsiasi
     # 2) ...ma l'exit deve essere realmente IT secondo il GeoIP commerciale,
     #    non solo secondo il consensus Tor (ruotiamo finché coincidono)
     wait_for_tor()
-    ensure_italian_exit()
+    exit_ip = ensure_italian_exit()
     _LAST_EXIT_CHECK = time.monotonic()
     yt = build_ytmusic()
+    # I testi devono uscire dallo stesso exit italiano dello scraping.
+    insert_lyrics.set_client(yt)
 
-    # Carica gli artisti dal DB e unisce quelli nuovi definiti localmente in newArtists.json
-    allArtists = getAllArtists()
-    newArtists_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "newArtists.json")
-    newArtists = json.load(open(newArtists_path, "r", encoding="utf-8"))
-    newArtistIds = {a["youtubeArtistId"] for a in newArtists}
-    allArtists = newArtists + [a for a in allArtists if a["youtubeArtistId"] not in newArtistIds]
+    allArtists, queuedCount = _load_artists(args)
 
-    log.info("Avvio elaborazione: %d artisti totali (%d nuovi)", len(allArtists), len(newArtists))
+    log.info("Avvio elaborazione: %d artisti totali (%d nuovi)", len(allArtists), queuedCount)
+    events.emit(
+        "run_start",
+        total_artists=len(allArtists),
+        queued_artists=queuedCount,
+        exit_ip=exit_ip,
+        mode="lyrics" if args.lyrics_only else ("scrape" if args.skip_lyrics else "full"),
+    )
 
     for index, artist in enumerate(allArtists):
         maintain_italian_exit()
         allSongs = []
         log.info("[%d/%d] Artista: %s", index + 1, len(allArtists), artist["name"])
-        try:
-            # Recupera gli album dell'artista sia da YouTube che dal DB
-            allAlbumYoutube = getAllAlbumArtistsInYouTube(artist["youtubeArtistId"])
-            allAlbumDB = getAllAlbumOfArtistInDB(artist["youtubeArtistId"])
+        events.emit(
+            "artist_start",
+            index=index + 1,
+            total=len(allArtists),
+            name=artist["name"],
+            youtube_artist_id=artist["youtubeArtistId"],
+        )
+        if not args.lyrics_only:
+            try:
+                # Recupera gli album dell'artista sia da YouTube che dal DB
+                allAlbumYoutube = getAllAlbumArtistsInYouTube(artist["youtubeArtistId"])
+                allAlbumDB = getAllAlbumOfArtistInDB(artist["youtubeArtistId"])
 
-            if len(allAlbumYoutube) == 0:
-                log.warning("Artista %s: nessun album trovato su YouTube", artist["name"])
-                continue
+                if len(allAlbumYoutube) == 0:
+                    log.warning("Artista %s: nessun album trovato su YouTube", artist["name"])
+                    events.emit("artist_skipped", name=artist["name"], reason="no_albums_youtube")
+                    continue
 
-            # Trova gli album presenti su YouTube ma non ancora nel DB (da aggiungere)
-            albumDBIds = {album["youtubeAlbumId"] for album in allAlbumDB}
-            filteredYTAlbums = [
-                a for a in allAlbumYoutube
-                if a.get("playlistId") is not None and a.get("playlistId") not in albumDBIds
-            ]
+                # Trova gli album presenti su YouTube ma non ancora nel DB (da aggiungere)
+                albumDBIds = {album["youtubeAlbumId"] for album in allAlbumDB}
+                filteredYTAlbums = [
+                    a for a in allAlbumYoutube
+                    if a.get("playlistId") is not None and a.get("playlistId") not in albumDBIds
+                ]
 
-            log.info(
-                "Artista %s: %d album su YouTube, %d già nel DB, %d nuovi",
-                artist["name"], len(allAlbumYoutube), len(allAlbumDB), len(filteredYTAlbums),
-            )
-            if filteredYTAlbums:
-                for albumYTFiltered in filteredYTAlbums:
-                    if _ALBUMS_SINCE_ROTATION >= _ROTATE_EVERY_ALBUMS:
-                        force_rotate_italian_exit()
-                    songs = getSongsOfAlbum(
-                        albumYTFiltered["browseId"],
-                        artistName=artist["name"],
-                        artistaChannelId=artist["youtubeArtistId"],
-                        idAlbum=albumYTFiltered["playlistId"],
-                    )
-                    _ALBUMS_SINCE_ROTATION += 1
-                    log.info(
-                        "  Album '%s' (%s): %d canzoni trovate",
-                        albumYTFiltered.get("title", "?"), albumYTFiltered["playlistId"], len(songs),
-                    )
-                    allSongs += songs
-                if allSongs:
-                    writeJSON(allSongs, f"{artist['name']}.json")
-                    log.info("Artista %s: %d canzoni totali salvate nel JSON", artist["name"], len(allSongs))
+                log.info(
+                    "Artista %s: %d album su YouTube, %d già nel DB, %d nuovi",
+                    artist["name"], len(allAlbumYoutube), len(allAlbumDB), len(filteredYTAlbums),
+                )
+                events.emit(
+                    "artist_albums",
+                    name=artist["name"],
+                    youtube=len(allAlbumYoutube),
+                    in_db=len(allAlbumDB),
+                    new=len(filteredYTAlbums),
+                )
+                if filteredYTAlbums:
+                    for albumYTFiltered in filteredYTAlbums:
+                        if _ALBUMS_SINCE_ROTATION >= _ROTATE_EVERY_ALBUMS:
+                            force_rotate_italian_exit()
+                        songs = getSongsOfAlbum(
+                            albumYTFiltered["browseId"],
+                            artistName=artist["name"],
+                            artistaChannelId=artist["youtubeArtistId"],
+                            idAlbum=albumYTFiltered["playlistId"],
+                        )
+                        _ALBUMS_SINCE_ROTATION += 1
+                        log.info(
+                            "  Album '%s' (%s): %d canzoni trovate",
+                            albumYTFiltered.get("title", "?"), albumYTFiltered["playlistId"], len(songs),
+                        )
+                        events.emit(
+                            "album_done",
+                            name=artist["name"],
+                            album=albumYTFiltered.get("title", "?"),
+                            playlist_id=albumYTFiltered["playlistId"],
+                            songs=len(songs),
+                        )
+                        allSongs += songs
+                    if allSongs:
+                        writeJSON(allSongs, f"{artist['name']}.json")
+                        log.info("Artista %s: %d canzoni totali salvate nel JSON", artist["name"], len(allSongs))
+                        events.emit("artist_saved", name=artist["name"], songs=len(allSongs))
+                    else:
+                        log.warning("Artista %s: album trovati ma nessuna canzone valida (tutte saltate?)", artist["name"])
+                        events.emit("artist_skipped", name=artist["name"], reason="no_valid_songs")
                 else:
-                    log.warning("Artista %s: album trovati ma nessuna canzone valida (tutte saltate?)", artist["name"])
-            else:
-                log.info("Artista %s: nessun album nuovo, skip", artist["name"])
+                    log.info("Artista %s: nessun album nuovo, skip", artist["name"])
+                    events.emit("artist_skipped", name=artist["name"], reason="no_new_albums")
 
-        except Exception as e:
-            log.error("Errore per l'artista %s (id: %s): %s", artist["name"], artist["youtubeArtistId"], e)
+            except Exception as e:
+                log.error("Errore per l'artista %s (id: %s): %s", artist["name"], artist["youtubeArtistId"], e)
+                events.emit("artist_error", name=artist["name"], error=str(e)[:300])
 
-        log.info("Avvio scraping testi per %s...", artist["name"])
-        #insert_lyrics_for_artist(artist["youtubeArtistId"])
+        # I testi erano stati disattivati commentando questa chiamata: ora la
+        # scelta e un'opzione (--skip-lyrics / --lyrics-only), esposta anche dal
+        # pannello, invece di stare nel codice.
+        if not args.skip_lyrics:
+            log.info("Avvio scraping testi per %s...", artist["name"])
+            insert_lyrics_for_artist(artist["youtubeArtistId"], artist_name=artist["name"])
 
-    log.info("Elaborazione completata. Avvio invio al backend...")
+    log.info("Elaborazione completata.")
 
     total_unplayable = sum(_UNPLAYABLE_STATS.values())
     if total_unplayable:
@@ -524,5 +702,16 @@ if __name__ == "__main__":
         log.info("Riepilogo canzoni non playable: %d totali (%s)", total_unplayable, breakdown)
     else:
         log.info("Riepilogo canzoni non playable: 0")
+    events.emit("unplayable_summary", total=total_unplayable, breakdown=dict(_UNPLAYABLE_STATS))
 
-    sender()
+    if args.no_send:
+        log.info("Invio saltato (--no-send): i JSON restano in attesa di approvazione.")
+        events.emit("run_end", sent=False)
+    else:
+        log.info("Avvio invio al backend...")
+        sender()
+        events.emit("run_end", sent=True)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
