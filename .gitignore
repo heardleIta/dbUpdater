@@ -5,8 +5,9 @@ __pycache__/
 .venv/
 venv/
 
-# Dati generati a runtime — le cartelle sono tracciate via .gitkeep,
-# i JSON vengono ignorati perché contengono dati potenzialmente grandi
+# Dati generati a runtime — la cartella è tracciata via .gitkeep, i JSON no:
+# contengono i risultati dello scraping, anche centinaia di KB per artista.
+# Vengono cancellati dopo l'invio, di cui resta il resoconto nel database.
 ArtistiRevisionati/*.json
 ArtistiSongSent/*.json
 
@@ -15,8 +16,14 @@ artistiRevisionati/
 
 test
 
+# Segreti d'ambiente: password Tor, credenziali backend, JWT condiviso.
+# Il modello senza valori è .env.example, quello sì tracciato.
+.env
+
+# Stato persistente del servizio di controllo: db della coda, log ed eventi dei
+# run, checkpoint dei testi.
+data/
+checkpoint_lyrics_sent.txt
+
 # Credenziali OAuth — non committare mai
 oauth.json
-
-# Config OpenVPN scaricato da VPN Gate (rigenerato da fetch_vpngate.py)
-vpn/config.ovpn
