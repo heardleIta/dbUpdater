@@ -186,15 +186,24 @@ def _exit_verdict(cc_primary: str | None, cc_secondaries: list[str]) -> tuple[bo
     concede il beneficio del dubbio.
 
     Se il primario non risponde — capita: rifiuta il traffico da certi exit con
-    403 — l'exit viene *rifiutato*, non accettato per ripiego. La differenza
-    rispetto a prima è che il rifiuto porta a mettere l'IP in blacklist e a
-    ruotare davvero: prima il lookup fallito veniva trattato come errore e
-    l'IP restava selezionabile, così NEWNYM poteva riproporre in eterno lo
-    stesso exit bloccato ed esaurire tutte le rotazioni su di lui.
+    403 — si ripiega sul consenso dei secondari, ma solo se sono almeno due e
+    concordi su IT. Il ripiego non è generosità: senza, un ipinfo.io che blocca
+    il traffico Tor in blocco (403 sistematico, non per singolo exit) fa
+    bocciare *ogni* exit, e ogni bocciatura finisce in ExcludeExitNodes. Con
+    ExitNodes {it} + StrictNodes 1 il pool italiano è di poche decine di relay:
+    escluderli tutti lascia Tor senza alcun exit selezionabile e lo manda nel
+    loop "Failed to choose an exit server".
+
+    Se nemmeno i secondari bastano l'exit resta rifiutato e finisce in
+    blacklist: il lookup fallito non va trattato come errore transitorio,
+    altrimenti l'IP resta selezionabile e NEWNYM può riproporre in eterno lo
+    stesso exit bloccato esaurendo su di lui tutte le rotazioni.
     """
     dissent = [c for c in cc_secondaries if c != "IT"]
 
     if cc_primary is None:
+        if len(cc_secondaries) >= 2 and not dissent:
+            return True, f"primario n/d, {len(cc_secondaries)} secondari concordi IT"
         return False, "primario senza verdetto (403 o non raggiungibile)"
     if cc_primary != "IT":
         return False, f"primario={cc_primary}"
@@ -213,6 +222,42 @@ def _exclude_exit_ips(ips: set[str]) -> None:
         raise RuntimeError(f"Tor SETCONF ExcludeExitNodes fallita: {resp}")
 
 
+def _reset_exit_exclusions() -> None:
+    """
+    Riporta ExcludeExitNodes al valore del torrc (vuoto).
+
+    Serve perché SETCONF vive quanto il processo Tor, non quanto il run: il
+    container tor-proxy resta acceso tra un run e l'altro, quindi senza reset
+    le esclusioni si accumulano per sempre. Con un pool IT di poche decine di
+    relay bastano un paio di run pieni di bocciature per escluderli tutti, e da
+    lì Tor non costruisce più alcun circuito: nessun run successivo riparte,
+    perché anche wait_for_tor esce dallo stesso proxy ormai senza exit.
+    """
+    resp = _tor_control("RESETCONF ExcludeExitNodes")
+    if not resp.startswith("250"):
+        raise RuntimeError(f"Tor RESETCONF ExcludeExitNodes fallita: {resp}")
+
+
+def _clear_blacklist(blacklist: set[str], *, reason: str) -> None:
+    """Svuota la blacklist locale e le esclusioni lato Tor, senza far fallire il run."""
+    had = len(blacklist)
+    blacklist.clear()
+    try:
+        _reset_exit_exclusions()
+    except Exception as e:
+        log.warning("Reset di ExcludeExitNodes fallito (%s): %s", reason, e)
+        return
+    if had:
+        log.warning("Azzerate %d esclusioni di exit (%s): si riparte dal pool IT pieno", had, reason)
+        events.emit("exit_blacklist_reset", excluded=had, reason=reason)
+
+
+# Tetto alle esclusioni simultanee. Gli exit italiani sono poche decine e
+# StrictNodes=1 rende ExcludeExitNodes vincolante senza ripieghi: oltre questa
+# soglia si rischia di svuotare il pool invece di restringerlo.
+_MAX_EXCLUDED_EXITS = 8
+
+
 def ensure_italian_exit(max_rotations: int = 20) -> str:
     """
     Il GeoIP interno di Tor (ExitNodes {it}) non coincide sempre con il GeoIP
@@ -223,14 +268,29 @@ def ensure_italian_exit(max_rotations: int = 20) -> str:
     di accettazione è in `_exit_verdict`.
     """
     blacklist: set[str] = set()
+    # Il Tor che si trova davanti può portarsi dietro le esclusioni del run
+    # precedente: si riparte sempre dal pool completo, mai da uno già svuotato.
+    _clear_blacklist(blacklist, reason="run_start")
+
+    lookup_failures = 0
     for attempt in range(1, max_rotations + 1):
         try:
             ip, cc_primary, cc_secondaries = _get_exit_geo()
+            lookup_failures = 0
             log.info("Tentativo %d/%d: exit IP=%s country=%s (secondari=%s)",
                      attempt, max_rotations, ip, cc_primary or "n/d",
                      ",".join(cc_secondaries) if cc_secondaries else "n/a")
         except Exception as e:
+            lookup_failures += 1
             log.warning("Lookup GeoIP fallito (tentativo %d): %s — ruoto circuito", attempt, e)
+            # Nessun provider raggiungibile per più tentativi di fila non è un
+            # problema dei provider: è il circuito che non si costruisce
+            # affatto, e la causa tipica è il pool di exit svuotato dalle
+            # esclusioni. Si azzerano prima di insistere, altrimenti le
+            # rotazioni successive girano a vuoto contro un pool vuoto.
+            if lookup_failures >= 3 and blacklist:
+                _clear_blacklist(blacklist, reason="lookup_failures")
+                lookup_failures = 0
             renew_circuit()
             continue
 
@@ -242,10 +302,18 @@ def ensure_italian_exit(max_rotations: int = 20) -> str:
 
         if ip:
             blacklist.add(ip)
-            _exclude_exit_ips(blacklist)
+            if len(blacklist) >= _MAX_EXCLUDED_EXITS:
+                _clear_blacklist(blacklist, reason="cap")
+            else:
+                _exclude_exit_ips(blacklist)
         log.warning("Exit non IT confermato (%s). Blacklist=%d, rotazione...", reason, len(blacklist))
         events.emit("exit_rejected", attempt=attempt, total=max_rotations, ip=ip, reason=reason)
         renew_circuit()
+
+    # Si esce in errore, ma senza lasciare il container Tor con un pool
+    # ristretto: il prossimo run (e l'healthcheck del compose) devono ritrovare
+    # tutti gli exit italiani disponibili.
+    _clear_blacklist(blacklist, reason="giveup")
     raise RuntimeError(f"Impossibile ottenere un exit IT confermato dopo {max_rotations} rotazioni")
 
 
