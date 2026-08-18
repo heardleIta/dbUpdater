@@ -27,9 +27,10 @@ services:
       - UPDATER_DATA_DIR=/data
     ports:
       - "${UPDATER_PORT:-8090}:8090"
-    depends_on:
-      tor-proxy:
-        condition: service_healthy
+    # Nessun depends_on su tor-proxy: Tor è spento di default, e legarci
+    # l'avvio significava che un healthcheck fallito (pool di exit italiani
+    # esaurito) impediva di partire anche a chi non lo usa. Quando serve, è
+    # `wait_for_tor` dentro il run ad aspettare il circuito.
     networks: [internal]
     volumes:
       - ./ArtistiRevisionati:/app/ArtistiRevisionati
@@ -47,9 +48,10 @@ services:
     env_file: .env
     environment:
       - UPDATER_DATA_DIR=/data
-    depends_on:
-      tor-proxy:
-        condition: service_healthy
+    # Nessun depends_on su tor-proxy: Tor è spento di default, e legarci
+    # l'avvio significava che un healthcheck fallito (pool di exit italiani
+    # esaurito) impediva di partire anche a chi non lo usa. Quando serve, è
+    # `wait_for_tor` dentro il run ad aspettare il circuito.
     networks: [internal]
     volumes:
       - ./ArtistiRevisionati:/app/ArtistiRevisionati

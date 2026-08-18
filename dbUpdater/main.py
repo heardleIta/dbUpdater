@@ -1,5 +1,7 @@
 
 import argparse
+import base64
+import gettext
 import json
 import logging
 import os
@@ -11,9 +13,23 @@ import time
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+import ytmusicapi
 from ytmusicapi import YTMusic
+from ytmusicapi.constants import SUPPORTED_LANGUAGES
+from ytmusicapi.helpers import get_visitor_id
+from ytmusicapi.navigation import (
+    CAROUSEL,
+    CAROUSEL_TITLE,
+    SECTION_LIST,
+    SINGLE_COLUMN_TAB,
+    TAB_CONTENT,
+    TWO_COLUMN_RENDERER,
+    nav,
+)
+from ytmusicapi.parsers.i18n import Parser
 
 from . import ARTISTI_REVISIONATI
+from . import DATA_DIR
 from . import events
 from . import insert_lyrics
 from .insert_lyrics import run as insert_lyrics_for_artist
@@ -34,9 +50,43 @@ log = logging.getLogger(__name__)
 TOR_PROXY_URL = os.getenv("TOR_PROXY_URL", "socks5h://tor-proxy:9050")
 _PROXIES = {"http": TOR_PROXY_URL, "https": TOR_PROXY_URL}
 
+# Tor è spento di default. Era nato per aggirare il blocco dell'IP del server,
+# ma con ExitNodes {it} + StrictNodes 1 il pool italiano si riduce a pochi exit
+# ormai noti a YouTube, che da lì risponde con pagine artista svuotate (nessuno
+# shelf album) e a volte HTML al posto del JSON: il rimedio era diventato il
+# problema. Si riaccende con USE_TOR=true o --tor. Con Tor spento saltano
+# attesa del proxy, verifica GeoIP e rotazioni: non c'è circuito da mantenere.
+_TOR_ENABLED = os.getenv("USE_TOR", "").strip().lower() in {"1", "true", "yes", "on"}
+
 TOR_CONTROL_HOST = os.getenv("TOR_CONTROL_HOST", "tor-proxy")
 TOR_CONTROL_PORT = int(os.getenv("TOR_CONTROL_PORT", "9051"))
 TOR_CONTROL_PASSWORD = os.getenv("TOR_CONTROL_PASSWORD", "")
+
+
+def _ytmusic_browser_headers() -> dict:
+    """
+    Header "da browser" opzionali, letti da YTMUSIC_HEADERS (JSON, anche in
+    base64 come lo produce ytmusicapi).
+
+    La variabile era già nel .env e nel compose ma non la leggeva nessuno.
+    Serve: dagli exit Tor YouTube tratta il client come anonimo sospetto e
+    risponde con la pagina artista svuotata (solo lo shelf "Playlists", niente
+    discografia). I cookie di consenso e di visitatore presi da un browser vero
+    sono la leva per farsi servire la pagina completa.
+    """
+    raw = os.getenv("YTMUSIC_HEADERS", "").strip()
+    if not raw:
+        return {}
+    try:
+        if not raw.startswith("{"):
+            raw = base64.b64decode(raw).decode("utf-8")
+        headers = json.loads(raw)
+        if not isinstance(headers, dict):
+            raise ValueError("non è un oggetto JSON")
+        return headers
+    except Exception as e:
+        log.warning("YTMUSIC_HEADERS non interpretabile (%s): la ignoro", e)
+        return {}
 
 
 def _build_session() -> requests.Session:
@@ -52,6 +102,22 @@ def _build_session() -> requests.Session:
     s.mount("http://", adapter)
     s.mount("https://", adapter)
     s.proxies.update(_PROXIES)
+
+    # I cookie vanno nel jar della session, non negli header: ytmusicapi passa
+    # un proprio dict `cookies` a ogni chiamata e un header Cookie impostato a
+    # mano verrebbe sovrascritto. Nel jar convivono, il suo SOCS incluso.
+    headers = _ytmusic_browser_headers()
+    cookie = headers.pop("Cookie", None) or headers.pop("cookie", None)
+    if headers:
+        s.headers.update(headers)
+    if cookie:
+        nomi = []
+        for pezzo in cookie.split(";"):
+            if "=" in pezzo:
+                nome, valore = pezzo.split("=", 1)
+                s.cookies.set(nome.strip(), valore.strip(), domain=".youtube.com")
+                nomi.append(nome.strip())
+        log.info("Cookie da YTMUSIC_HEADERS caricati: %s", ", ".join(nomi))
     return s
 
 
@@ -338,6 +404,8 @@ def force_rotate_italian_exit() -> None:
     (ogni _ROTATE_EVERY_ALBUMS album) per evitare il rate-limit di YouTube.
     """
     global _LAST_EXIT_CHECK, _ALBUMS_SINCE_ROTATION
+    if not _TOR_ENABLED:
+        return
     log.info("Rotazione Tor forzata dopo %d album", _ALBUMS_SINCE_ROTATION)
     renew_circuit()
     ensure_italian_exit()
@@ -352,6 +420,8 @@ def maintain_italian_exit() -> None:
     ensure_italian_exit per ruotare fino a ritrovare un exit italiano.
     """
     global _LAST_EXIT_CHECK
+    if not _TOR_ENABLED:
+        return
     now = time.monotonic()
     if (now - _LAST_EXIT_CHECK) < _EXIT_CHECK_INTERVAL_S:
         return
@@ -374,7 +444,47 @@ def maintain_italian_exit() -> None:
 
 def build_ytmusic() -> YTMusic:
     """YTMusic con Session retry + proxies SOCKS5h. location='IT' per mercato italiano."""
-    return YTMusic(location="IT", requests_session=_build_session(), proxies=_PROXIES)
+    yt = YTMusic(location="IT", requests_session=_build_session(), proxies=_PROXIES)
+    _warmup_visitor_id(yt)
+    return yt
+
+
+def _warmup_visitor_id(yt: YTMusic) -> str:
+    """
+    Recupera subito il visitor id da music.youtube.com e lo fissa negli header.
+
+    Dalla 1.9 ytmusicapi lo chiede da sé costruendo gli header; sulla 1.8.x
+    invece non prima della *seconda* chiamata, e la prima parte senza. In più,
+    se la GET finisce su una pagina di consenso o su un blocco — cosa normale
+    da un exit Tor — il visitor id resta vuoto e YouTube ci vede come client
+    non identificato, che è esattamente la condizione in cui serve la pagina
+    artista svuotata. Farlo qui copre entrambe le versioni e soprattutto rende
+    la cosa visibile nel log invece che silenziosa.
+    """
+    try:
+        headers = yt.headers
+    except Exception as e:
+        log.warning("Header YTMusic non inizializzabili: %s", e)
+        return ""
+
+    visitor = headers.get("X-Goog-Visitor-Id", "")
+    if not visitor:
+        try:
+            visitor = get_visitor_id(yt._send_get_request).get("X-Goog-Visitor-Id", "")
+        except Exception as e:
+            log.warning("Visitor id non recuperabile: %s", e)
+            return ""
+        if visitor:
+            headers["X-Goog-Visitor-Id"] = visitor
+
+    if visitor:
+        log.info("Visitor id ottenuto da YouTube (%s...)", visitor[:14])
+    else:
+        log.warning(
+            "Nessun visitor id da music.youtube.com: la GET non ha restituito la pagina "
+            "attesa (consenso o blocco dell'exit). YouTube ci tratterà da client anonimo."
+        )
+    return visitor
 
 
 def _retry_ytmusic(fn, *args, attempts: int = 3, base_delay: float = 5.0, **kwargs):
@@ -394,6 +504,30 @@ def _retry_ytmusic(fn, *args, attempts: int = 3, base_delay: float = 5.0, **kwar
             last = e
             log.warning("Chiamata YTMusic fallita (tentativo %d/%d): %s", i + 1, attempts, e)
             time.sleep(base_delay * (2 ** i))
+        except json.JSONDecodeError as e:
+            # ytmusicapi fa json.loads sul corpo della risposta: quando YouTube
+            # serve HTML al posto del JSON (challenge anti-bot, pagina di
+            # consenso, exit in blacklist) l'errore che emerge è "Expecting
+            # value: line 1 column 1". Non è transitorio finché si esce dallo
+            # stesso IP: riprovare dopo una pausa ripete lo stesso blocco,
+            # quindi si cambia circuito prima del tentativo successivo.
+            last = e
+            log.warning(
+                "Risposta non-JSON da YouTube (tentativo %d/%d): %s",
+                i + 1, attempts,
+                "exit probabilmente bloccato — ruoto circuito" if _TOR_ENABLED
+                else "IP probabilmente limitato — attendo",
+            )
+            events.emit("youtube_blocked", attempt=i + 1, attempts=attempts)
+            if not _TOR_ENABLED:
+                # Senza Tor non c'è un altro IP da provare: resta solo aspettare.
+                time.sleep(base_delay * (2 ** i))
+                continue
+            try:
+                force_rotate_italian_exit()
+            except Exception as rot_err:
+                log.warning("Rotazione dopo blocco fallita: %s", rot_err)
+                time.sleep(base_delay * (2 ** i))
     raise last
 
 
@@ -422,6 +556,106 @@ def getAllAlbumOfArtistInDB(artistId):
     return data["data"]["albums"]
 
 
+# Dump di diagnosi: uno per artista sarebbe ingestibile su 500+ artisti, ma
+# senza nemmeno uno non c'è modo di sapere *cosa* ha risposto YouTube.
+_BROWSE_DUMPS = 0
+_MAX_BROWSE_DUMPS = 3
+
+
+def _dump_browse_payload(artistIdYouTube, response) -> str | None:
+    """Salva la risposta browse quando il layout non è riconoscibile."""
+    global _BROWSE_DUMPS
+    if _BROWSE_DUMPS >= _MAX_BROWSE_DUMPS:
+        return None
+    try:
+        outdir = os.path.join(DATA_DIR, "diagnostics")
+        os.makedirs(outdir, exist_ok=True)
+        path = os.path.join(outdir, f"artist_{artistIdYouTube}_{int(time.time())}.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(response, f, ensure_ascii=False, indent=2)
+        _BROWSE_DUMPS += 1
+        return path
+    except Exception as e:
+        log.warning("Dump della risposta YouTube fallito: %s", e)
+        return None
+
+
+# Ordine in cui si prova a riconoscere le sezioni. ytmusicapi identifica lo
+# shelf degli album confrontando il *titolo tradotto* ("Albums", "Album",
+# "Álbumes"...) con quello che YouTube ha scritto nella pagina: basta che la
+# risposta arrivi in una lingua diversa da quella del client perché nessuna
+# categoria combaci e l'artista risulti senza album. Chiediamo hl=en, ma dagli
+# exit Tor YouTube non sempre lo rispetta, quindi si provano in sequenza tutti
+# i cataloghi disponibili, partendo dai due plausibili qui.
+_LINGUE_SHELF = ("en", "it") + tuple(sorted(SUPPORTED_LANGUAGES - {"en", "it"}))
+_YTM_LOCALES = os.path.join(os.path.dirname(ytmusicapi.__file__), "locales")
+_PARSER_CACHE: dict[str, Parser] = {}
+
+
+def _parser_lingua(language: str) -> Parser:
+    """Parser di ytmusicapi con il catalogo di traduzioni della lingua data."""
+    if language not in _PARSER_CACHE:
+        _PARSER_CACHE[language] = Parser(
+            gettext.translation("base", localedir=_YTM_LOCALES, languages=[language])
+        )
+    return _PARSER_CACHE[language]
+
+
+def _descrivi_sezioni(sections) -> str:
+    """Elenco compatto delle sezioni ricevute, per capire cosa ha risposto YouTube."""
+    voci = []
+    for sezione in sections:
+        tipo = next(iter(sezione), "?")
+        if tipo == CAROUSEL[0]:
+            titolo = nav(sezione, CAROUSEL + CAROUSEL_TITLE, True) or {}
+            voci.append(f"carosello:{titolo.get('text', '?')}")
+        else:
+            voci.append(tipo)
+    return ", ".join(voci) or "nessuna"
+
+
+# browseId e params della pagina "Album" dell'artista, quella dietro la freccia
+# "Mostra tutto" dello shelf. Sono costanti — i singoli usano ...IAho..., gli
+# album ...IARo... — e permettono di chiedere la discografia senza passare
+# dalla pagina artista, che dagli exit Tor arriva svuotata.
+_PARAMS_SHELF_ALBUM = "ggMIegYIARoCAQI%3D"
+
+
+def _channel_id(artistIdYouTube: str) -> str:
+    """Id di canale nudo: la pagina artista può essere indirizzata anche come MPLA..."""
+    return artistIdYouTube[4:] if artistIdYouTube.startswith("MPLA") else artistIdYouTube
+
+
+def _album_da_pagina_dedicata(artistIdYouTube):
+    """Album chiesti direttamente alla pagina dedicata, saltando gli shelf."""
+    return _retry_ytmusic(
+        yt.get_artist_albums,
+        channelId="MPAD" + _channel_id(artistIdYouTube),
+        params=_PARAMS_SHELF_ALBUM,
+        limit=None,
+    )
+
+
+def _artist_browse(artistIdYouTube):
+    """
+    Risposta grezza della pagina artista e le sue sezioni (gli "shelf").
+
+    Non si passa da yt.get_artist perché quella, prima di qualunque altra cosa,
+    legge header.musicImmersiveHeaderRenderer: se YouTube serve una variante di
+    pagina con un header diverso solleva KeyError e l'artista viene saltato
+    anche quando gli album — l'unico dato che ci serve — sono regolarmente nel
+    corpo della risposta. Non è un caso di scuola: dagli exit Tor succede su
+    ogni artista, perché la pagina servita lì non è quella che si vede da un IP
+    residenziale, e l'intero run finiva in errore senza scaricare nulla.
+    """
+    response = _retry_ytmusic(yt._send_request, "browse", {"browseId": _channel_id(artistIdYouTube)})
+    # Layout storico a colonna singola; alcune pagine arrivano a due colonne.
+    sections = nav(response, SINGLE_COLUMN_TAB + SECTION_LIST, True)
+    if sections is None:
+        sections = nav(response, [*TWO_COLUMN_RENDERER, *TAB_CONTENT, *SECTION_LIST], True)
+    return response, sections
+
+
 def getAllAlbumArtistsInYouTube(artistIdYouTube):
     """
     Recupera da YouTube Music la lista di album di un artista.
@@ -430,20 +664,68 @@ def getAllAlbumArtistsInYouTube(artistIdYouTube):
       - album già presenti nei risultati diretti
     Normalizza inoltre la chiave 'audioPlaylistId' → 'playlistId' per uniformità.
     """
-    artista_obj = _retry_ytmusic(yt.get_artist, channelId=artistIdYouTube)
-    albums = artista_obj.get("albums")
+    response, sections = _artist_browse(artistIdYouTube)
+    if not sections:
+        # Nessuna sezione: la risposta è arrivata (era JSON valido) ma non è una
+        # pagina artista. Serve vederla per capire, quindi la si salva.
+        header = ",".join(response.get("header", {}).keys()) or "assente"
+        path = _dump_browse_payload(artistIdYouTube, response)
+        raise RuntimeError(
+            f"pagina artista senza sezioni riconoscibili (header={header}, "
+            f"dump={path or 'non salvato'})"
+        )
+
+    albums = None
+    for lingua in _LINGUE_SHELF:
+        try:
+            albums = _parser_lingua(lingua).parse_channel_contents(sections).get("albums")
+        except FileNotFoundError:
+            continue  # catalogo non presente in questa versione di ytmusicapi
+        if albums is not None:
+            if lingua != "en":
+                # Non è un dettaglio: dice che YouTube sta ignorando hl=en e
+                # serve la pagina localizzata, cosa che spiega da sola perché
+                # prima nessun artista risultava avere album.
+                log.info("Sezioni riconosciute con il catalogo '%s' (YouTube non ha rispettato hl=en)", lingua)
+            break
+
     listaAlbumArtista = []
     if albums is not None:
         params = albums.get("params")
         browseID = albums.get("browseId")
         if params and browseID:
-            # L'artista ha molti album: serve una chiamata dedicata per ottenerli tutti
-            listaAlbumArtista = _retry_ytmusic(yt.get_artist_albums, channelId=browseID, params=params)
+            # L'artista ha molti album: serve una chiamata dedicata per ottenerli
+            # tutti. limit=None è obbligatorio: il default di ytmusicapi è 100,
+            # e su discografie lunghe (Celentano: 160 album) i più vecchi non
+            # arrivavano mai, senza che nulla lo segnalasse.
+            listaAlbumArtista = _retry_ytmusic(
+                yt.get_artist_albums, channelId=browseID, params=params, limit=None
+            )
         else:
             # Gli album sono già inclusi nella risposta principale
             listaAlbumArtista = albums.get("results", [])
     else:
-        log.warning("Nessun album trovato per l'artista %s", artista_obj.get("name", artistIdYouTube))
+        # Le sezioni ci sono ma nessuna è lo shelf degli album: o l'artista non
+        # ha discografia, o YouTube ha servito una pagina svuotata. Prima di
+        # arrendersi si prova la pagina album dedicata: è un browse diverso e
+        # può rispondere per intero anche quando quella artista non lo fa.
+        try:
+            listaAlbumArtista = _album_da_pagina_dedicata(artistIdYouTube)
+        except Exception as e:
+            listaAlbumArtista = []
+            log.warning("Pagina album dedicata non utilizzabile per %s: %s", artistIdYouTube, e)
+        if listaAlbumArtista:
+            log.info(
+                "Shelf album assente per %s: %d album recuperati dalla pagina dedicata",
+                artistIdYouTube, len(listaAlbumArtista),
+            )
+        else:
+            # L'elenco delle sezioni distingue i due casi senza aprire il dump.
+            path = _dump_browse_payload(artistIdYouTube, response)
+            log.warning(
+                "Nessuno shelf album per l'artista %s — sezioni ricevute: %s (dump=%s)",
+                artistIdYouTube, _descrivi_sezioni(sections), path or "non salvato",
+            )
 
     # Normalizza la chiave: alcuni album usano 'audioPlaylistId' invece di 'playlistId'
     for item in listaAlbumArtista:
@@ -601,6 +883,12 @@ def _parse_args(argv=None):
              "in attesa di approvazione dal back office.",
     )
     parser.add_argument(
+        "--tor", action=argparse.BooleanOptionalAction, default=None,
+        help="Fa uscire le richieste da Tor invece che dall'IP di questa macchina. "
+             "Di default è spento (gli exit italiani sono bloccati da YouTube); "
+             "senza il flag decide USE_TOR dell'ambiente.",
+    )
+    parser.add_argument(
         "--queue-file", default=None, metavar="PATH",
         help="File JSON con gli artisti nuovi (default: newArtists.json del progetto).",
     )
@@ -652,16 +940,25 @@ def _load_artists(args):
 
 
 def main(argv=None):
-    global yt, _LAST_EXIT_CHECK, _ALBUMS_SINCE_ROTATION
+    global yt, _LAST_EXIT_CHECK, _ALBUMS_SINCE_ROTATION, _TOR_ENABLED, _PROXIES
 
     args = _parse_args(argv)
+    if args.tor is not None:
+        _TOR_ENABLED = args.tor
 
     # 1) Tor deve essere raggiungibile con un circuito qualsiasi
     # 2) ...ma l'exit deve essere realmente IT secondo il GeoIP commerciale,
     #    non solo secondo il consensus Tor (ruotiamo finché coincidono)
-    wait_for_tor()
-    exit_ip = ensure_italian_exit()
-    _LAST_EXIT_CHECK = time.monotonic()
+    if _TOR_ENABLED:
+        wait_for_tor()
+        exit_ip = ensure_italian_exit()
+        _LAST_EXIT_CHECK = time.monotonic()
+    else:
+        # Le richieste escono dall'IP della macchina: nessun circuito da
+        # attendere, nessun GeoIP da verificare, nessuna rotazione possibile.
+        _PROXIES = {}
+        exit_ip = "diretto"
+        log.info("Tor non attivo: le richieste escono dall'IP di questa macchina (--tor per usarlo).")
     yt = build_ytmusic()
     # I testi devono uscire dallo stesso exit italiano dello scraping.
     insert_lyrics.set_client(yt)

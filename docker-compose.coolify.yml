@@ -54,15 +54,18 @@ services:
       # Origin del sito, altrimenti il browser blocca le chiamate dal pannello.
       - UPDATER_CORS_ORIGINS=${UPDATER_CORS_ORIGINS}
       - YTMUSIC_HEADERS=${YTMUSIC_HEADERS}
+      # Tor spento di default: gli exit italiani sono bloccati da YouTube.
+      - USE_TOR=${USE_TOR:-false}
       - TOR_PROXY_URL=socks5h://tor-proxy:9050
       - TOR_CONTROL_HOST=tor-proxy
       - TOR_CONTROL_PORT=9051
       - TOR_CONTROL_PASSWORD=${TOR_CONTROL_PASSWORD}
     expose:
       - "8090"
-    depends_on:
-      tor-proxy:
-        condition: service_healthy
+    # Nessun depends_on su tor-proxy: Tor è spento di default, e legarci
+    # l'avvio significava che un healthcheck fallito (pool di exit italiani
+    # esaurito) impediva di partire anche a chi non lo usa. Quando serve, è
+    # `wait_for_tor` dentro il run ad aspettare il circuito.
     networks: [internal]
     volumes:
       # Stato che deve sopravvivere ai redeploy: database della coda e dello
